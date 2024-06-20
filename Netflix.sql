@@ -39,3 +39,19 @@ case when film_category = 'Movie' then eng_title
 else left(eng_title, position(': Season' in Title)-1) end as only_title,
 avaiable_globally, release_date, hours_viewed, film_category
 from cte2
+
+
+-- Phân tích 1: Số lượng phim được phát hành global và không global
+/* select available_globally, count(available_globally),sum(hours_viewed)
+from cte3
+group by available_globally 
+-- Phân tích 2: Phân tích số lượng giờ view theo film
+select only_title, count(only_title), sum(hours_viewed)
+from cte3
+group by only_title
+order by sum(hours_viewed) desc => "Ginny & Georgia" 
+-- Phân tích 3: 
+select * from cte3
+where eng_title like '%Season%' and film_category like 'Movie'	
+order by eng_title  ---=> "The Night Agent: Season 1" */
+-- 
