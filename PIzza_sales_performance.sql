@@ -21,7 +21,27 @@ copy Piz_sales from 'C:\Program Files\PostgreSQL\15\data\pizza_sales_excel_file.
 select distinct(pizza_name) from piz_sales => 32 loại pizza
 
 -- Explore dữ liệu
+select count(distinct(order_id)) as no_order_id, 
+count(distinct(pizza_name_id)) as no_pizza_name_id, 
+count(distinct(quantity)) as no_quantity, 
+count(distinct(pizza_size)) as no_pizza_size, 
+count(distinct(pizza_category)) as no_pizza_category, 
+count(distinct(pizza_name)) as no_pizza_name
+from piz_sales
+=> 21350 order, 91 loại pizza + size được bán ra, 5 size pizza, 4 category và 32 loại pizza
 
+select sum(total_price)/count(distinct(order_id)) as gt_tb_order,
+sum(quantity)/count(distinct(order_id)) as tb_pizza_order
+from piz_sales
+=> trung bình $38/order, 2 pizza/order	
+
+select round(sum(total_price),2) as tong_doanh_thu,
+sum(quantity) as tong_so_luong,
+round(sum(total_price)/count(distinct(order_date)),2) as doanh_thu_tb_ngay
+from piz_sales
+=> tong doanh thu: $817,860,00, doanh thu TB ngày $2248.53, tổng số bán ra 49594 pizza	
+
+-- Phân tích top 5 pizza qua doanh thu và số lượng bán
 select 
 pizza_name, sum(total_price), sum(quantity)
 from piz_sales
@@ -104,7 +124,7 @@ when pizza_size = 'L' then 'size_L'
 when pizza_size = 'M' then 'size_M'
 else 'size_S'
 end size_category,
-count(*) as so_luong_order, sum(quantity) as tong_so_luong,
+count(Distinct(order_id)) as so_don_order as so_luong_order, sum(quantity) as tong_so_luong,
 sum(total_price) as tong_doanh_thu
 from piz_sales
 group by size_category
