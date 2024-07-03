@@ -29,5 +29,16 @@ I. Create table and import data
 II. Data cleaning
 1. Check null/blank/duplicates
 2. Cleaning Outliers
-3. Analyzing
 
+III. Analyzing
+1. Key metrics
+2. RFM
+### R - F - M Analysis
+
+I start my analyzing process by calculating the 3 metrics R, F, and M: 
+
+- **R - Recency** = I calculate this by taking the current analysis date, obtained using the CURRENT_DATE function, and subtracting the last time each customer made a purchase by using the MAX() function.
+- **F - Frequency** = To calculate the frequency, which represents how many times each customer has purchased, I use the COUNT() function to count the number of orders for each customer
+- **M - Monetary** = To understand how much money each customer has spent on purchases, I use the SUM() function to calculate the total sales amount for each customer.
+
+Source code: 
