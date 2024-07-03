@@ -41,4 +41,9 @@ I start my analyzing process by calculating the 3 metrics R, F, and M:
 - **F - Frequency** = To calculate the frequency, which represents how many times each customer has purchased, I use the COUNT() function to count the number of orders for each customer
 - **M - Monetary** = To understand how much money each customer has spent on purchases, I use the SUM() function to calculate the total sales amount for each customer.
 
+Next, I divide the values of each recency, frequency, and monetary into 5 different levels by using the NTILE() Function
+
+- For the F and M metrics, I assign levels from 1 to 5, ordered from smallest to largest.
+- However, for the F metric, I will assign the levels in reverse order (5 is the smallest and 1 is the largest) because for the F metric, a smaller value indicates the customer has made a recent purchase, which should be assigned a better level, which is level 5
+
 Source code: 
