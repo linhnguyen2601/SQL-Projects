@@ -41,7 +41,7 @@ Based on the combination of Recency, Frequency, and Monetary (R-F-M) values, I w
 | Champions | 555, 554, 544, 545, 454, 455, 445 | Users who have visited most recently, visited most frequently and spent the most. |
 | Loyal Customers | 543, 444, 435, 355, 354, 345, 344, 335 | Users who visited recently visited often and spent a great amount |
 | Potential Loyalist | 553, 551, 552, 541, 542, 533, 532, 531, 452, 451, 442, 441, 431, 453, 433, 432, 423, 353, 352, 351, 342, 341, 333, 323 | A recent user, who spent a good amount |
-| Recent Customers | 512, 511, 422, 421 412, 411, 311 | Users visited most recently, but not often, and have not spent much |
+| New Customers | 512, 511, 422, 421 412, 411, 311 | Users visited most recently, but not often, and have not spent much |
 | Promising | 525, 524, 523, 522, 521, 515, 514, 513, 425,424, 413,414,415, 315, 314, 313 | Average recency, frequency, and monetary scores |
 | Need Attention | 535, 534, 443, 434, 343, 334, 325, 324 | Users have spent a good amount but long ago (not visited recently) |
 | About To Sleep | 331, 321, 312, 221, 213, 231, 241, 251 | Below-average recency, frequency, and monetary values |
@@ -88,8 +88,11 @@ This could result in as many as 125 distinct customer segments (5x5x5), into whi
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/50e89b05-274d-40bd-99dc-06d93f2f243d)
 
+In terms of customer segmentation we have a table of the number of customer for each segment as follow:
 
-Visualize the data with excel:
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/48255f26-b6b4-4376-a7ed-aea710ceace4)
+
+And then we visualize the result with excel:
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/bcfb4b07-65f0-4fe3-a73b-af50df42a74a)
 
 
