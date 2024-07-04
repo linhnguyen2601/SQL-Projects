@@ -63,7 +63,11 @@ Based on the combination of Recency, Frequency, and Monetary (R-F-M) values, I w
 
 For table SALES_DATASET_RFM_PRJ, by using the ISNULL() and ROW_NUMBER() function, I did not detect any NULL values or duplicate data.
 
-However, with table SEGMMENT_SCORE I discovered 3 value 231, 241 and 251 were duplicated as were recorded in two segments: "About to Sleep" and "Hibernating" while they should only be categorized as "Hibernating". Therfore I deleted three rows from table SEGMMENT_SCORE as below:
+However, with table SEGMMENT_SCORE I discovered 3 value 231, 241 and 251 were duplicated as were recorded in two segments: "About to Sleep" and "Hibernating customers" while they should only be categorized as "Hibernating customers". 
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/5158ccae-02e3-4ed9-af15-4f1c1ade5713)
+
+Therfore I deleted three rows from table SEGMMENT_SCORE as below:
 
 | Segment | Scores | 
 | --- | --- | 
@@ -79,7 +83,7 @@ First, I calculated the z-score for each data point, which measures the number o
 I discovered 14 extreme values and excluded them from the dataset, creating a new table SALES_DATASET_RFM_CLEAN with z-score of quantityorder between -3 and 3.
 
 **III. Analyzing**
-1. Key metrics and insights from the dataset:
+**1. Data Exploration:**
 
 a. Revenue by ProductLine, Year  và DealSize. 
 
@@ -106,9 +110,10 @@ c. Which product has the best revenue in the UK each year?
 
 **d. Who is the best customer based on RFM analysis?**
 
-2. RFM
+**2. Data processing using RFM method **
 ### R - F - M Analysis
 
+#### 
 I start my analyzing process by assigning Recency, Frequency & Monetary Values 
 
 - **R - Recency** = I calculate the amount of time since the customer’s most recent transaction (days) by taking the current analysis date, obtained using the CURRENT_DATE function, and subtracting the last time each customer made a purchase by using the MAX() function.
@@ -132,10 +137,17 @@ In terms of customer segmentation we have a table of the number of customer for 
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/48255f26-b6b4-4376-a7ed-aea710ceace4)
 
-**And then we visualize the result** 
+**And then I visualized the result with Treemap:** 
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/0369e6cd-3d64-4d5c-afe2-8a5187fd1386)
 
 Based on RFM analysis, I can identify the best customers and categorize others into respective groups:
 
-Source code: 
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/b68bd644-ae82-4a9e-b03c-d07378d3867b)
+
+
+Source code: https://github.com/linhnguyen2601/SQL-Projects/blob/main/Customer%20Segmentation%20RFM/Customer%20Segmentation.sql
+
+**Reference for table of customer segments**
+
+"_What Are RFM Scores and How To Calculate Them_" https://connectif.ai/en/blog/what-are-rfm-scores-and-how-to-calculate-them/
