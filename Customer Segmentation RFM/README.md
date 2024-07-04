@@ -5,7 +5,7 @@
 Businesses need to segment their customers into distinct groups based on demographic, geographic, psychographic, and behavioral data to better understand their needs and preferences. This segmentation will enable the development and implementation of tailored marketing campaigns for each group, enhancing customer engagement and satisfaction. The performance of these campaigns will be monitored and evaluated regularly to ensure effectiveness and identify areas for improvement.
 
 ## Process
-### Business requirements analysis
+### Business requirement analysis
 
 For customer segmentation, we will base it on 3 factors: **R (Recency)** - Recent purchases, **F (Frequency)** - Frequency of purchases, and **M (Monetary**) - Monetary value, each corresponding to some key customer traits. 
 
@@ -59,7 +59,8 @@ Based on the combination of Recency, Frequency, and Monetary (R-F-M) values, I w
 4. Create table SEGMMENT_SCORE that contains 11 distinct groups of customer segments and respective RPM scores
 
 **II. Data cleaning**
-1. Check null/blank/duplicates
+
+**1. Check null/blank/duplicates**
 
 For table SALES_DATASET_RFM_PRJ, by using the ISNULL() and ROW_NUMBER() function, I did not detect any NULL values or duplicate data.
 
@@ -75,7 +76,7 @@ Therfore I deleted three rows from table SEGMMENT_SCORE as below:
 | About To Sleep | 241 |
 | About To Sleep | 251 |
   
-2. Cleaning Outliers
+**2. Cleaning Outliers**
 For table SALES_DATASET_RFM_PRJ, I determined outliers using the z-score method.
 
 First, I calculated the z-score for each data point, which measures the number of standard deviations a data point is from the mean. Identify outliers as those data points with a z-score greater than 3 or less than -3, indicating they are significantly different from the majority of the data. 
@@ -83,6 +84,7 @@ First, I calculated the z-score for each data point, which measures the number o
 I discovered 14 extreme values and excluded them from the dataset, creating a new table SALES_DATASET_RFM_CLEAN with z-score of quantityorder between -3 and 3.
 
 **III. Analyzing**
+
 **1. Data Exploration:**
 
 a. Revenue by ProductLine, Year  và DealSize. 
@@ -108,12 +110,12 @@ c. Which product has the best revenue in the UK each year?
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/bf54a22a-9041-4be6-a7ff-3ca77e03a598)
 
 
-**d. Who is the best customer based on RFM analysis?**
+**d. Who is the best customer based on RFM analysis? (we will jump in RFM analysis right now!!!)**
 
-**2. Data processing using RFM method **
+**2. Data processing using RFM method**
+
 ### R - F - M Analysis
 
-#### 
 I start my analyzing process by assigning Recency, Frequency & Monetary Values 
 
 - **R - Recency** = I calculate the amount of time since the customer’s most recent transaction (days) by taking the current analysis date, obtained using the CURRENT_DATE function, and subtracting the last time each customer made a purchase by using the MAX() function.
