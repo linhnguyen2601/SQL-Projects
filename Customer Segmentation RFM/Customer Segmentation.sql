@@ -89,8 +89,43 @@ from sales_dataset_rfm_prj)
 select * from cte
 where abs((quantityordered - avg)/stddev) <= 3
 
--- 5. RFM ANALYSIS
--- 5.1. Calculate Recency, Frequency and Monetary Values
+-- 5. Key metrics
+-- a. Revenue by ProductLine, Year  và DealSize. 
+-- Revenue by ProductLine
+	
+SELECT productline, 
+       ROUND(SUM(quantityordered * priceeach):: numeric, 2) AS revenue
+FROM sales_dataset_rfm_clean
+WHERE status = 'Shipped'
+GROUP BY productline
+ORDER BY revenue desc;
+
+-- Revenue by Year
+SELECT year_id, 
+       ROUND(SUM(quantityordered * priceeach):: numeric, 2) AS revenue
+FROM sales_dataset_rfm_clean
+where status = 'Shipped'
+GROUP BY year_id
+ORDER BY revenue desc;
+
+-- Which month has the best sales each year?
+with cte as
+	(
+SELECT year_id, month_id,
+       ROUND(SUM(quantityordered * priceeach):: numeric, 2) AS revenue
+FROM sales_dataset_rfm_clean
+where status = 'Shipped'
+GROUP BY year_id, month_id
+ORDER BY revenue desc)
+
+select year_id, month_id, revenue 
+	from cte
+where revenue in (select max_revenue from 
+(select year_id, max(revenue) as max_revenue from cte
+group by year_id) as a)
+	
+-- 6. RFM ANALYSIS
+-- 6.1. Calculate Recency, Frequency and Monetary Values
 select customername, 
 	current_date - max(orderdate) as recency,
 	count(distinct(ordernumber)) as frequency,
@@ -99,7 +134,7 @@ select customername,
 where status = 'Shipped'
 group by customername
 
--- 5.2. Divide RFM Values into 5 tiers using NTILE and form the rfm_scores using CONCAT:
+-- 6.2. Divide RFM Values into 5 tiers using NTILE and form the rfm_scores using CONCAT:
 with cte as
 	(
 select customername, 
@@ -120,7 +155,7 @@ from cte
 	)
 select customername, concat(r,f,m) as rfm_scores from cte2 
 
--- 5.3. JOIN table cte3 with table segment_score to categorize customers and create table rfm_results to save the result
+-- 6.3. JOIN table cte3 with table segment_score to categorize customers and create table rfm_results to save the result
 CREATE TABLE rfm_results as
 with cte as
 	(
