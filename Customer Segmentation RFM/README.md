@@ -9,13 +9,13 @@ Businesses need to segment their customers into distinct groups based on demogra
 
 For customer segmentation, we will base it on 3 factors: **R (Recency)** - Recent purchases, **F (Frequency)** - Frequency of purchases, and **M (Monetary**) - Monetary value, each corresponding to some key customer traits. 
 
-Using RFM nalysis can be more effective for understanding customer behavior and tailoring marketing campaigns compared to segmentation based purely on age or geography. Here are some reasons why:
+Using RFM analysis can be more effective for understanding customer behavior and tailoring marketing campaigns compared to segmentation based purely on age or geography. Here are some reasons why:
 
 1. Behavioral Insights:
 
-Recency: Customers who have purchased recently are more likely to respond to promotions than those who haven't bought in a while.
-Frequency: Frequent buyers are usually more loyal and valuable, indicating a higher likelihood of repeat purchases.
-Monetary: High-spending customers can be targeted with premium offers or exclusive deals.
+- Recency: Customers who have purchased recently are more likely to respond to promotions than those who haven't bought in a while.
+- Frequency: Frequent buyers are usually more loyal and valuable, indicating a higher likelihood of repeat purchases.
+- Monetary: High-spending customers can be targeted with premium offers or exclusive deals.
 
 2. Personalization:
 
@@ -36,8 +36,19 @@ RFM provides actionable segments such as "champions" (high R, F, and M) and "at-
 
 Based on the combination of Recency, Frequency, and Monetary (R-F-M) values, I will segment all customers into 11 distinct groups, each with its own unique characteristics. 
 
-
-
+| Segment | Score |  Description |
+| --- | --- | --- |
+| Champions | 555, 554, 544, 545, 454, 455, 445 | Users who have visited most recently, visited most frequently and spent the most. |
+| Loyal Customers | 543, 444, 435, 355, 354, 345, 344, 335 | Users who visited recently visited often and spent a great amount |
+| Potential Loyalist | 553, 551, 552, 541, 542, 533, 532, 531, 452, 451, 442, 441, 431, 453, 433, 432, 423, 353, 352, 351, 342, 341, 333, 323 | A recent user, who spent a good amount |
+| Recent Customers | 512, 511, 422, 421 412, 411, 311 | Users visited most recently, but not often, and have not spent much |
+| Promising | 525, 524, 523, 522, 521, 515, 514, 513, 425,424, 413,414,415, 315, 314, 313 | Average recency, frequency, and monetary scores |
+| Need Attention | 535, 534, 443, 434, 343, 334, 325, 324 | Users have spent a good amount but long ago (not visited recently) |
+| About To Sleep | 331, 321, 312, 221, 213, 231, 241, 251 | Below-average recency, frequency, and monetary values |
+| At Risk | 255, 254, 245, 244, 253, 252, 243, 242, 235, 234, 225, 224, 153, 152, 145, 143, 142, 135, 134, 133, 125, 124 | Users visited most recently, and also often, but have not spent much |
+| Cannot Lose Them | 155, 154, 144, 214,215,115, 114, 113 | The user has spent a great amount and visited often but long ago (not visited recently) |
+| Hibernating customers | 332, 322, 233, 232, 223, 222, 132, 123, 122, 212, 211 | The user's last visit was long back, visits are not often, and has not spent much |
+| Lost customers | 111, 112, 121, 131,141,151 | Lowest recency, frequency, and monetary scores |
 
 
 ### Data process
@@ -51,20 +62,25 @@ II. Data cleaning
 1. Check null/blank/duplicates
 2. Cleaning Outliers
 
+SALES_DATASET_RFM_CLEAN
+
 III. Analyzing
 1. Key metrics
 2. RFM
 ### R - F - M Analysis
 
-I start my analyzing process by calculating the 3 metrics R, F, and M: 
+I start my analyzing process by assigning Recency, Frequency & Monetary Values 
 
-- **R - Recency** = I calculate this by taking the current analysis date, obtained using the CURRENT_DATE function, and subtracting the last time each customer made a purchase by using the MAX() function.
-- **F - Frequency** = To calculate the frequency, which represents how many times each customer has purchased, I use the COUNT() function to count the number of orders for each customer
-- **M - Monetary** = To understand how much money each customer has spent on purchases, I use the SUM() function to calculate the total sales amount for each customer.
+- **R - Recency** = I calculate the amount of time since the customer’s most recent transaction (days) by taking the current analysis date, obtained using the CURRENT_DATE function, and subtracting the last time each customer made a purchase by using the MAX() function.
+- **F - Frequency** = To calculate the total number of transactions made by the customer, I use the COUNT() function to count the number of orders of each customer 
+- **M - Monetary** = To calculate the total amount that the customer has spent across all transactions, I use the SUM() function to calculate the total sales. 
 
-Next, I divide the values of each recency, frequency, and monetary into 5 different levels by using the NTILE() Function
+Next, I divide the customer list into tiered groups for each of the three dimensions (R, F and M), specifically into 5 different levels by using the NTILE() Function
 
 - For the F and M metrics, I assign levels from 1 to 5, ordered from smallest to largest.
 - However, for the F metric, I will assign the levels in reverse order (5 is the smallest and 1 is the largest) because for the F metric, a smaller value indicates the customer has made a recent purchase, which should be assigned a better level, which is level 5
+
+This results in 125 distinct customer segments (5x5x5), into which customers will be segmented into segmentation groups according to above table.
+
 
 Source code: 
