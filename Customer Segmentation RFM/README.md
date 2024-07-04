@@ -52,20 +52,64 @@ Based on the combination of Recency, Frequency, and Monetary (R-F-M) values, I w
 
 
 ### Data process
-I. Create table and import data
+**I. Create table and import data**
 1. Create database in PostgresSQL
 2. Create table SALES_DATASET_RFM_PRJ and import data
 3. Change the data type of table SALES_DATASET_RFM_PRJ 
-4. Create table that contains 11 distinct groups of customer segments and respective RPM scores
+4. Create table SEGMMENT_SCORE that contains 11 distinct groups of customer segments and respective RPM scores
 
-II. Data cleaning
+**II. Data cleaning**
 1. Check null/blank/duplicates
+
+For table SALES_DATASET_RFM_PRJ, by using the ISNULL() and ROW_NUMBER() function, I did not detect any NULL values or duplicate data.
+
+However, with table SEGMMENT_SCORE I discovered 3 value 231, 241 and 251 were duplicated as were recorded in two segments: "About to Sleep" and "Hibernating" while they should only be categorized as "Hibernating". Therfore I update 
+  
 2. Cleaning Outliers
+For table SALES_DATASET_RFM_PRJ, I determined outliers using the z-score method.
 
-SALES_DATASET_RFM_CLEAN
+First, I calculated the z-score for each data point, which measures the number of standard deviations a data point is from the mean. Identify outliers as those data points with a z-score greater than 3 or less than -3, indicating they are significantly different from the majority of the data. 
 
-III. Analyzing
-1. Key metrics
+I discovered 14 extreme values and excluded them from the dataset, creating a new table SALES_DATASET_RFM_CLEAN with z-score of quantityorder between -3 and 3.
+
+**III. Analyzing**
+1. Key metrics and insights from the dataset:
+
+a. Revenue by ProductLine, Year  và DealSize. 
+
+- Revenue by Productline
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/1504f4f3-d96a-49d8-b98a-cbd2b0d94d31)
+
+- Revenue by YEAR
+  
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/1454c6f7-b7d7-4ece-93ef-c90822a29398)
+
+- Revenue by Dealsize
+  
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/43a5f3b9-f0d9-4e98-a076-c7a899e3a940)
+  
+b. Which month has the best sales each year?
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/53a76ab4-2497-4694-b9cc-435cc987ffac)
+
+c. Which product line sells the most in November?
+
+d. Which product has the best revenue in the UK each year?
+
+e. 
+1) Doanh thu theo từng ProductLine, Year  và DealSize?
+Output: PRODUCTLINE, YEAR_ID, DEALSIZE, REVENUE
+2) Đâu là tháng có bán tốt nhất mỗi năm?
+Output: MONTH_ID, REVENUE, ORDER_NUMBER
+3) Product line nào được bán nhiều ở tháng 11?
+Output: MONTH_ID, REVENUE, ORDER_NUMBER
+4) Đâu là sản phẩm có doanh thu tốt nhất ở UK mỗi năm? 
+Xếp hạng các các doanh thu đó theo từng năm.
+Output: YEAR_ID, PRODUCTLINE,REVENUE, RANK
+5) Ai là khách hàng tốt nhất, phân tích dựa vào RFM 
+(sử dụng lại bảng customer_segment ở buổi học 23)
+
 2. RFM
 ### R - F - M Analysis
 
@@ -92,8 +136,10 @@ In terms of customer segmentation we have a table of the number of customer for 
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/48255f26-b6b4-4376-a7ed-aea710ceace4)
 
-And then we visualize the result with excel:
-![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/bcfb4b07-65f0-4fe3-a73b-af50df42a74a)
+**And then we visualize the result** 
 
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/0369e6cd-3d64-4d5c-afe2-8a5187fd1386)
+
+Based on RFM analysis, I can identify the best customers and categorize others into respective groups:
 
 Source code: 
