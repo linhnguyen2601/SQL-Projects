@@ -123,6 +123,15 @@ select year_id, month_id, revenue
 where revenue in (select max_revenue from 
 (select year_id, max(revenue) as max_revenue from cte
 group by year_id) as a)
+
+-- Which product has the best revenue in the UK each year?
+select productline,
+round(sum(case when year_id = 2003 then quantityordered * priceeach else 0 end):: numeric,2) "2003",
+round(sum(case when year_id = 2004 then quantityordered * priceeach else 0 end):: numeric,2) "2004",
+round(sum(case when year_id = 2005 then quantityordered * priceeach else 0 end):: numeric,2) "2005"
+FROM sales_dataset_rfm_clean
+	where status = 'Shipped'
+group by productline
 	
 -- 6. RFM ANALYSIS
 -- 6.1. Calculate Recency, Frequency and Monetary Values
