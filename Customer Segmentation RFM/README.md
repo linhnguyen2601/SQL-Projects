@@ -73,14 +73,18 @@ I start my analyzing process by assigning Recency, Frequency & Monetary Values
 
 - **R - Recency** = I calculate the amount of time since the customer’s most recent transaction (days) by taking the current analysis date, obtained using the CURRENT_DATE function, and subtracting the last time each customer made a purchase by using the MAX() function.
 - **F - Frequency** = To calculate the total number of transactions made by the customer, I use the COUNT() function to count the number of orders of each customer 
-- **M - Monetary** = To calculate the total amount that the customer has spent across all transactions, I use the SUM() function to calculate the total sales. 
+- **M - Monetary** = To calculate the total amount that the customer has spent across all transactions, I use the SUM() function to calculate the total sales.
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/12b6f021-6086-466a-87e8-a1d419e1169a)
 
 Next, I divide the customer list into tiered groups for each of the three dimensions (R, F and M), specifically into 5 different levels by using the NTILE() Function
 
 - For the F and M metrics, I assign levels from 1 to 5, ordered from smallest to largest.
 - However, for the F metric, I will assign the levels in reverse order (5 is the smallest and 1 is the largest) because for the F metric, a smaller value indicates the customer has made a recent purchase, which should be assigned a better level, which is level 5
 
-This results in 125 distinct customer segments (5x5x5), into which customers will be segmented into segmentation groups according to above table.
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/44e16ff8-11fa-43a4-875b-1b2843691815)
+
+This could result in as many as 125 distinct customer segments (5x5x5), into which customers will be segmented into segmentation groups according to above table. However, as we have only 92 customers so we have the following rfm segmentation result:
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/50e89b05-274d-40bd-99dc-06d93f2f243d)
 
