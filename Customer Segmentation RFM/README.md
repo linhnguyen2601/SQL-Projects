@@ -93,22 +93,12 @@ b. Which month has the best sales each year?
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/53a76ab4-2497-4694-b9cc-435cc987ffac)
 
-c. Which product line sells the most in November?
+c. Which product has the best revenue in the UK each year?
 
-d. Which product has the best revenue in the UK each year?
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/bf54a22a-9041-4be6-a7ff-3ca77e03a598)
 
-e. 
-1) Doanh thu theo từng ProductLine, Year  và DealSize?
-Output: PRODUCTLINE, YEAR_ID, DEALSIZE, REVENUE
-2) Đâu là tháng có bán tốt nhất mỗi năm?
-Output: MONTH_ID, REVENUE, ORDER_NUMBER
-3) Product line nào được bán nhiều ở tháng 11?
-Output: MONTH_ID, REVENUE, ORDER_NUMBER
-4) Đâu là sản phẩm có doanh thu tốt nhất ở UK mỗi năm? 
-Xếp hạng các các doanh thu đó theo từng năm.
-Output: YEAR_ID, PRODUCTLINE,REVENUE, RANK
-5) Ai là khách hàng tốt nhất, phân tích dựa vào RFM 
-(sử dụng lại bảng customer_segment ở buổi học 23)
+
+**d. Who is the best customer based on RFM analysis?**
 
 2. RFM
 ### R - F - M Analysis
