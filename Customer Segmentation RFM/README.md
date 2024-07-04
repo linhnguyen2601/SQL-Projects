@@ -82,5 +82,11 @@ Next, I divide the customer list into tiered groups for each of the three dimens
 
 This results in 125 distinct customer segments (5x5x5), into which customers will be segmented into segmentation groups according to above table.
 
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/50e89b05-274d-40bd-99dc-06d93f2f243d)
+
+
+Visualize the data with excel:
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/bcfb4b07-65f0-4fe3-a73b-af50df42a74a)
+
 
 Source code: 
