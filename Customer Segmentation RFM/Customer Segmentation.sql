@@ -120,4 +120,31 @@ from cte
 	)
 select customername, concat(r,f,m) as rfm_scores from cte2 
 
--- 5.3. JOIN table cte3 with table segment_score to categorize customers
+-- 5.3. JOIN table cte3 with table segment_score to categorize customers and create table rfm_results to save the result
+CREATE TABLE rfm_results as
+with cte as
+	(
+select customername, 
+	current_date - max(orderdate) as recency, 
+	count(distinct(ordernumber)) as frequency, 
+	sum(quantityordered * priceeach) as monetary
+	from sales_dataset_rfm_clean
+where status = 'Shipped'
+group by customername
+	),
+cte2 as 
+	(
+select customername, recency,
+ntile(5) over(order by recency desc) as R, frequency,
+ntile(5) over(order by frequency) as F, monetary,
+ntile(5) over(order by monetary) as M
+from cte
+	),
+cte3 as 
+	(
+select customername, concat(r,f,m) as rfm_scores from cte2)
+
+select customername, rfm_scores, segment from cte3 as a
+join segment_score as b
+on a.rfm_scores = b.scores
+
