@@ -1,4 +1,4 @@
--- 1. Tạo bảng trong PostgreSQL
+-- 1. Create table and import data
 create table SALES_DATASET_RFM_PRJ
 (
   ordernumber VARCHAR,
@@ -34,7 +34,7 @@ ALTER COLUMN sales TYPE float USING sales::double precision,
 ALTER COLUMN orderdate TYPE date USING orderdate::date,
 ALTER COLUMN msrp TYPE integer USING msrp::integer
 
--- 3. Check Null/Blank
+-- 3. Data cleaning
 select * from public.sales_dataset_rfm_prj
 where ordernumber is null
 
@@ -54,3 +54,10 @@ select * from public.sales_dataset_rfm_prj
 where orderdate is null
 
 
+select customername, 
+	current_date - max(orderdate) as recency,
+	count(distinct(ordernumber)) as frequency,
+	sum(quantityordered * priceeach) as monetary
+	from sales_dataset_rfm_clean
+where status = 'Shipped'
+group by customername
