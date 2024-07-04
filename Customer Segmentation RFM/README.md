@@ -48,7 +48,7 @@ Based on the combination of Recency, Frequency, and Monetary (R-F-M) values, I w
 | At Risk | 255, 254, 245, 244, 253, 252, 243, 242, 235, 234, 225, 224, 153, 152, 145, 143, 142, 135, 134, 133, 125, 124 | Users visited most recently, and also often, but have not spent much |
 | Cannot Lose Them | 155, 154, 144, 214,215,115, 114, 113 | The user has spent a great amount and visited often but long ago (not visited recently) |
 | Hibernating customers | 332, 322, 233, 232, 223, 222, 132, 123, 122, 212, 211 | The user's last visit was long back, visits are not often, and has not spent much |
-| Lost customers | 111, 112, 121, 131,141,151 | Lowest recency, frequency, and monetary scores |
+| Lost customers | 111, 112, 121, 131,141,151 | Lowest recency, frequency, and monetary scores which show low spending, low frequency, and haven't purchased in a long time. |
 
 
 ### Data process
