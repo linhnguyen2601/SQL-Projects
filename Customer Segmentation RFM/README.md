@@ -1,5 +1,7 @@
 # Customer Segmentation Using RFM Analysis
 
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/b62d5999-63b7-40aa-ba5f-e0fe6b22eb26)
+
 ## Business requirements
 
 Businesses need to segment their customers into distinct groups based on demographic, geographic, psychographic, and behavioral data to better understand their needs and preferences. This segmentation will enable the development and implementation of tailored marketing campaigns for each group, enhancing customer engagement and satisfaction. The performance of these campaigns will be monitored and evaluated regularly to ensure effectiveness and identify areas for improvement.
