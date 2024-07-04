@@ -63,7 +63,13 @@ Based on the combination of Recency, Frequency, and Monetary (R-F-M) values, I w
 
 For table SALES_DATASET_RFM_PRJ, by using the ISNULL() and ROW_NUMBER() function, I did not detect any NULL values or duplicate data.
 
-However, with table SEGMMENT_SCORE I discovered 3 value 231, 241 and 251 were duplicated as were recorded in two segments: "About to Sleep" and "Hibernating" while they should only be categorized as "Hibernating". Therfore I update 
+However, with table SEGMMENT_SCORE I discovered 3 value 231, 241 and 251 were duplicated as were recorded in two segments: "About to Sleep" and "Hibernating" while they should only be categorized as "Hibernating". Therfore I deleted three rows from table SEGMMENT_SCORE as below:
+
+| Segment | Scores | 
+| --- | --- | 
+| About To Sleep | 231 |
+| About To Sleep | 241 |
+| About To Sleep | 251 |
   
 2. Cleaning Outliers
 For table SALES_DATASET_RFM_PRJ, I determined outliers using the z-score method.
