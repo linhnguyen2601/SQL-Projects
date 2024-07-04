@@ -2,7 +2,7 @@
 
 ## Business requirements
 
-Businesses need to segment their customers into different customer groups in order to understand their customers better and implement distinct campaigns targeting each different customer segment. 
+Businesses need to segment their customers into distinct groups based on demographic, geographic, psychographic, and behavioral data to better understand their needs and preferences. This segmentation will enable the development and implementation of tailored marketing campaigns for each group, enhancing customer engagement and satisfaction. The performance of these campaigns will be monitored and evaluated regularly to ensure effectiveness and identify areas for improvement.
 
 ## Process
 ### Business requirements analysis
