@@ -303,6 +303,33 @@ Như vậy lại quay ra nghi ngờ tính chính xác của cột created_at tro
 
 Mình sẽ check kĩ hơn cột này để xem còn các order mà bị created_at các ngày khác nhau hay không. Ở trên là mới check sơ qua về việc khác tháng. hic
 
+select 
+distinct(order_id), count(distinct(format_date('%Y-%m-%d',created_at))) as num
+from bigquery-public-data.thelook_ecommerce.order_items
+where order_id in (select order_id from bigquery-public-data.thelook_ecommerce.orders where status = 'Complete' and created_at < '2024-07-01')
+group by order_id
+having num > 1
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/c3f15d0f-0273-4400-b026-73eafa3a32e7)
+
+Đúng vậy, không quá ngạc nhiên chúng ta ra 7887 order_id mà có các order_item bị created_at ở các ngày khác nhau và tương tự như phát hiện ở trên, nhiều trường hợp các order_id này có created_at sau ngày shipped_at
+
+with cte as (
+select 
+distinct(order_id), count(distinct(format_date('%Y-%m-%d',created_at))) as num
+from bigquery-public-data.thelook_ecommerce.order_items
+where order_id in (select order_id from bigquery-public-data.thelook_ecommerce.orders where status = 'Complete' and created_at < '2024-07-01')
+group by order_id
+having num > 1)
+
+select * from bigquery-public-data.thelook_ecommerce.order_items 
+where order_id in (Select order_id from cte)
+order by order_id, created_at
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/842e140f-47e5-458f-a66e-35e3fd30acc9)
+
+Rất may mắn là ở đây không có dòng nào mà cột shipped_at bị null, vậy nếu để sửa dữ liệu này (trong trường hợp ta chấp nhân các record bị sai là đơn giản là bị recorded sai) thì có thể sử dụng ngày min(created_at) group by order_id để apply cho các ngày khác cùng 1 order_id 
+
 **1. The number of completed orders and user each month**
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/76b2dd76-4872-4549-8e75-2cf09ac3d2d7)
