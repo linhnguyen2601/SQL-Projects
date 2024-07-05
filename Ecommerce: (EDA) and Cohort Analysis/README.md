@@ -222,6 +222,13 @@ group by status
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/58fb898d-c766-437c-9142-ceac72c2285d)
 
+Từ bảng này t nhận thấy tỷ lệ đơn hàng Complete chỉ chiêm ~ 25% tổng số đơn hàng. Điều này dẫn tới các nghi vấn sau:
+
+- Có nhiều đơn hàng phát sinh trong các tháng gần dây nên trạng thái processing và shipped đang cao?
+- Nếu không phải thì do các đơn hàng chưa được cập nhật trạng thái?
+- 
+
+
 select 
 format_date('%Y-%m',created_at) as month_year,
 avg(Distinct(order_id)) as total_orders,
@@ -247,7 +254,7 @@ order by month_year
 
 Nhiều đơn hàng từ 1/2019 vẫn đang trong tình trạng shipped nhưng chưa được hoàn thành?
 
-Therefore I decided to focus on "Complete" orders, ignoring the Shipped and Processing as there is no stakeholder to clarify this point. 
+Vì không rõ outcome của các đơn hàng này có complete hay không nên I decided to focus on "Complete" orders, ignoring the Shipped and Processing as there is no stakeholder to clarify this point. 
 
 **1. The number of completed orders and user each month**
 
