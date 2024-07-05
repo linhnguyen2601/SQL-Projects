@@ -110,7 +110,6 @@ The dataset comprises of 7 tables:
 || traffic_source| Source of the traffic leading to the user.
 || created_at| Timestamp indicating when the user account was created.
 
-
 ## Data cleaning
 
 1. Check NULL
@@ -211,7 +210,36 @@ select min(created_at) as start_period, max(created_at) as end_period
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/e67de495-e1bb-4ee3-8226-e74d9b0c1b77)
 
+1. The number of completed orders and user each month 
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/76b2dd76-4872-4549-8e75-2cf09ac3d2d7)
+
+we only consider orders with status = 'Complete'
+
+select count(Distinct(order_id)) as completed_order,
+count(distinct(user_id)) as users from bigquery-public-data.thelook_ecommerce.orders
+where status = 'Complete'
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/33cd569c-79cd-4638-8413-7d06478e54f1)
+
+select extract(year from created_at) as year, extract(month from created_at) as month, 
+count(Distinct(order_id)) as completed_order,
+count(distinct(user_id)) as users 
+from bigquery-public-data.thelook_ecommerce.orders
+where status = 'Complete'
+group by year, month
+order by year desc, month desc
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/87266474-bf0a-48c4-a1f9-e4f2f18bd9e3)
+
+select concat(extract(year from created_at),' - ', extract(month from created_at)) as month_year, 
+count(Distinct(order_id)) as completed_order,
+count(distinct(user_id)) as users 
+from bigquery-public-data.thelook_ecommerce.orders
+where status = 'Complete'
+group by month_year
+order by month_year desc
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/e5061e82-a511-4fe5-82a9-c6a716536914)
 
 
-
-Số lượng đơn hàng và số lượng khách hàng mỗi tháng 
