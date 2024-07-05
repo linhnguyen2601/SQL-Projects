@@ -210,10 +210,12 @@ select min(created_at) as start_period, max(created_at) as end_period
 
 select count(distinct(order_id)) from bigquery-public-data.thelook_ecommerce.orders
 where created_at < '2024-07-01'
+
 =>> 120806 orders
 
 select count(distinct(order_id)) from bigquery-public-data.thelook_ecommerce.order_items 
 where created_at < '2024-07-01'
+
 => 120735 orders
 
 select status, count(distinct(order_id)) from bigquery-public-data.thelook_ecommerce.orders
@@ -255,6 +257,51 @@ order by month_year
 Nhiều đơn hàng từ 1/2019 vẫn đang trong tình trạng shipped nhưng chưa được hoàn thành?
 
 Vì không rõ outcome của các đơn hàng này có complete hay không nên I decided to focus on "Complete" orders, ignoring the Shipped and Processing as there is no stakeholder to clarify this point. 
+
+Bảng order_items
+
+select count(Distinct(order_id)) from bigquery-public-data.thelook_ecommerce.order_items
+where order_id in (select order_id from bigquery-public-data.thelook_ecommerce.orders where status = 'Complete' and created_at < '2024-07-01')
+
+=> 30514 orders => đúng so với bảng orders
+
+Tuy nhiên, tôi phát hiện bảng này xuất hiện các order_item được record về tháng-năm created at khác nhau sau khi chạy lệnh kiểm tra cho công thức để xác định số order mỗi tháng ở bảng order_items
+
+with cte as (
+select format_date('%Y-%m',created_at) as month_year,
+count(distinct(order_id)) as no_orders
+from bigquery-public-data.thelook_ecommerce.order_items
+where order_id in (select order_id from bigquery-public-data.thelook_ecommerce.orders where status = 'Complete' and created_at < '2024-07-01')
+group by month_year
+order by month_year desc)
+
+select sum(no_orders) from cte
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/e4170594-0c4f-4651-bb57-e9aba70e14e0)
+
+
+select 
+distinct(order_id), count(distinct(format_date('%Y-%m',created_at))) as num
+from bigquery-public-data.thelook_ecommerce.order_items
+where order_id in (select order_id from bigquery-public-data.thelook_ecommerce.orders where status = 'Complete' and created_at < '2024-07-01')
+group by order_id
+having num > 1
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/14272819-3503-41ff-a90f-af470de9e45e)
+
+=> xuất hiện 616 kết quả
+
+Chạy lại bảng order_items với các kết quả trên:
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/ecb91038-3770-4eeb-97cd-41f2d1b33ba5)
+
+Nhận xét có các record cùng số order, cùng user_id nhưng với các product khác nhau thì lại được tạo ở các ngày (created_at) khác nhau và thậm chí là khác tháng, có những order_item line mà ở đó, ngày created_at còn sau ngày được ship đi
+
+=> như vậy nếu thống kê theo số order của từng tháng sẽ không chính xác khi chạy hàm distinct.
+
+Như vậy lại quay ra nghi ngờ tính chính xác của cột created_at trong khi cột này là cột duy nhất không bị nhiều giá trị null như các cột ngày tháng còn lại như shipped_at, delivered_at và returned_at.
+
+Mình sẽ check kĩ hơn cột này để xem còn các order mà bị created_at các ngày khác nhau hay không. Ở trên là mới check sơ qua về việc khác tháng. hic
 
 **1. The number of completed orders and user each month**
 
