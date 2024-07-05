@@ -330,6 +330,24 @@ order by order_id, created_at
 
 Rất may mắn là ở đây không có dòng nào mà cột shipped_at bị null, vậy nếu để sửa dữ liệu này (trong trường hợp ta chấp nhân các record bị sai là đơn giản là bị recorded sai) thì có thể sử dụng ngày min(created_at) group by order_id để apply cho các ngày khác cùng 1 order_id 
 
+1 phát hiện khác nữa khi join hai bảng orders và order_items:
+
+select a.order_id, a.created_at, b.order_id, b.created_at 
+from bigquery-public-data.thelook_ecommerce.orders as a
+join bigquery-public-data.thelook_ecommerce.order_items as b
+on a.order_id = b.order_id
+order by a.order_id
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/b755a4d3-4f53-4b0e-a80d-27f4a6d4426b)
+
+Thời gian đơn hàng đc tạo và thời gian từng item trong đơn hàng được tạo là khác nhau, như vậy mình nghi ngờ thêm về tính chính xác của cột created_at của bảng order_items vì ở bảng orders không xảy ra tình trạng ngày ở cột created_at sau ngày shipped_at nhưng ở bảng order_items thì tình trạng này xảy ra khá nhiều (35865 dòng/trên tổng 181427 dòng ~ gần 20%):
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/934a54eb-a64a-473c-bddc-d3767ed99a2f)
+
+chưa kể cột shipped_at còn bị null khá nhiều (63K dòng)
+
+Vì vậy mình sẽ sử dụng cột created_at của bảng orders khi join 2 bảng orders và order_item
+
 **1. The number of completed orders and user each month**
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/76b2dd76-4872-4549-8e75-2cf09ac3d2d7)
