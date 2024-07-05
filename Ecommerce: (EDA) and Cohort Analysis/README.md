@@ -376,6 +376,34 @@ Number of orders and users increased month after month
 Thống kê giá trị đơn hàng trung bình và tổng số người dùng khác nhau mỗi tháng 
 ( Từ 1/2019-6/2024)
 
+select a.order_id, a.created_at, b.user_id, b.product_id, b.sale_price
+from bigquery-public-data.thelook_ecommerce.orders as a
+join bigquery-public-data.thelook_ecommerce.order_items as b
+on a.order_id = b.order_id
+where a.status = 'Complete' and a.created_at < '2024-07-01'
+order by a.order_id
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/659a932d-1926-45b8-a57c-972ef862317f)
+
+
+with cte as (
+select a.order_id, a.created_at, b.user_id, b.product_id, b.sale_price
+from bigquery-public-data.thelook_ecommerce.orders as a
+join bigquery-public-data.thelook_ecommerce.order_items as b
+on a.order_id = b.order_id
+where a.status = 'Complete' and a.created_at < '2024-07-01'
+order by a.order_id)
+
+select format_date('%Y-%m', created_at) as month_year,
+sum(sale_price)/count(distinct(order_id)) as AOV,
+count(distinct(user_id)) as user_number from cte
+group by month_year
+order by month_year desc
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/d5551d18-49e6-4c8f-9f10-8e50f1e14261)
+
+3. Nhóm khách hàng theo độ tuổi
+Tìm các khách hàng có trẻ tuổi nhất và lớn tuổi nhất theo từng giới tính
 
 
 
