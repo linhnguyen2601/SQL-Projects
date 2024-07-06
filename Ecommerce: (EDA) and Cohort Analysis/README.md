@@ -447,8 +447,8 @@ order by total desc
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/cfa8c0ed-27f8-4035-9cc4-ad0cd6415027)
 
-6. Thống kê top 5 sản phẩm có lợi nhuận cao nhất từng tháng (xếp hạng cho từng sản phẩm).
-
+6. Thống kê top 5 sản phẩm có lợi nhuận cao nhất
+   
 with cte as(
   select a.order_id, a.created_at, b.product_id
 from bigquery-public-data.thelook_ecommerce.orders as a
@@ -463,6 +463,46 @@ where id in (Select product_id from cte)
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/088e7795-b2af-41b5-a959-eb2f6f65bb8f)
 
 => chỉ còn 22k/29K sản phẩm đã được bán trong những đơn hàng đã hoàn thành và đc tạo trước tháng 7/2024
+
+with cte as(
+  select a.order_id, a.created_at, b.product_id, b.sale_price, c.cost, c.name
+from bigquery-public-data.thelook_ecommerce.orders as a
+join bigquery-public-data.thelook_ecommerce.order_items as b
+on a.order_id = b.order_id
+join bigquery-public-data.thelook_ecommerce.products as c
+on b.product_id = c.id
+where a.status = 'Complete' and a.created_at < '2024-07-01'
+)
+select product_id, name, count(distinct(order_id)) as total_order, sum(sale_price - cost) as total_profit
+from cte
+group by product_id,name
+order by total_profit desc
+limit 5
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/bef2432e-951c-414e-91b4-422178a9ff05)
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/ebbc972f-5c12-454a-ba92-43400a5992ec)
+
+=> sp bán đc lợi nhuận cao nhất: AIR JORDAN DOMINATE SHORTS MENS 465071-100
+
+7. Doanh thu tính đến thời điểm hiện tại trên mỗi danh mục
+
+with cte as(
+  select a.order_id, a.created_at, b.product_id, b.sale_price, c.category
+from bigquery-public-data.thelook_ecommerce.orders as a
+join bigquery-public-data.thelook_ecommerce.order_items as b
+on a.order_id = b.order_id
+join bigquery-public-data.thelook_ecommerce.products as c
+on b.product_id = c.id
+where a.status = 'Complete' and a.created_at < '2024-07-01'
+)
+
+select category, count(distinct(order_id)) as total_order, sum(sale_price) as revenue from cte
+group by category
+order by revenue desc
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/5874b73c-7193-40d5-8df1-f43b86699fd8)
+
 
 
 
