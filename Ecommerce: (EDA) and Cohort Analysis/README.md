@@ -332,7 +332,7 @@ Rất may mắn là ở đây không có dòng nào mà cột shipped_at bị nu
 
 1 phát hiện khác nữa khi join hai bảng orders và order_items:
 
-select a.order_id, a.created_at, b.order_id, b.created_at 
+select a.order_id, a.created_at, b.order_id
 from bigquery-public-data.thelook_ecommerce.orders as a
 join bigquery-public-data.thelook_ecommerce.order_items as b
 on a.order_id = b.order_id
@@ -446,6 +446,23 @@ group by traffic_source
 order by total desc
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/cfa8c0ed-27f8-4035-9cc4-ad0cd6415027)
+
+6. Thống kê top 5 sản phẩm có lợi nhuận cao nhất từng tháng (xếp hạng cho từng sản phẩm).
+
+with cte as(
+  select a.order_id, a.created_at, b.product_id
+from bigquery-public-data.thelook_ecommerce.orders as a
+join bigquery-public-data.thelook_ecommerce.order_items as b
+on a.order_id = b.order_id
+where a.status = 'Complete' and a.created_at < '2024-07-01'
+order by a.order_id
+)
+select * from  bigquery-public-data.thelook_ecommerce.products
+where id in (Select product_id from cte)
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/088e7795-b2af-41b5-a959-eb2f6f65bb8f)
+
+=> chỉ còn 22k/29K sản phẩm đã được bán trong những đơn hàng đã hoàn thành và đc tạo trước tháng 7/2024
 
 
 
