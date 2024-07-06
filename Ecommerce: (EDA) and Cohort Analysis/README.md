@@ -405,6 +405,47 @@ order by month_year desc
 3. Nhóm khách hàng theo độ tuổi
 Tìm các khách hàng có trẻ tuổi nhất và lớn tuổi nhất theo từng giới tính
 
+Tiếp tục buổi hôm trước, mình vẫn đang phân vân về việc có thống kê khách hàng thuộc các nhóm khác ngoài nhóm có đơn hàng complete hay không. Vì thực tế mình k đánh giá cao chất lượng của dataset này. Nếu đưa khách hàng thuộc các nhóm khác vào vậy thì thường sẽ cần phải phân tích thêm với mỗi 1 nhóm các đơn hàng có trạng thái hủy/hoàn thành, phân bố nhóm khách hàng sẽ như thế nào.
+
+NHững nhóm tuổi/giới tính nào có tỷ lệ hủy đơn/hoàn tất đơn/trả đơn hàng cao hơn. Ở đây đang tìm điểm xem xét là độ tuổi/giới tính có liên quan đến xu hướng, hành vi mua hàng không mà chưa xét đến lí do hủy đơn/hoàn hàng vì các thông tin đó không được đưa vào trong dataset.
+
+Vì tính thực tế của dữ liệu không có nên việc nghiên cứu sâu vào khía cạnh này để đưa ra phân tích là chưa cần thiết, vì vậy mình sẽ tiến hành query với nhóm đối tượng khách hàng đã hoàn thành đơn hàng (có status = Complete) => phải nối với bảng orders
+
+select age, 
+sum(case when gender = 'M' then 1 else 0 end) as Male,
+sum(case when gender = 'F' then 1 else 0 end) as Female,
+count(id)  from bigquery-public-data.thelook_ecommerce.users
+where id in (Select user_id from bigquery-public-data.thelook_ecommerce.orders where status = 'Complete' and created_at < '2024-07-01') 
+group by age
+order by age
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/fabc997e-d6ef-4c39-ac13-de0bb5b75e9d)
+
+Độ tuổi KH từ 12-61
+
+4. Theo geography/country
+
+select country, 
+sum(case when gender = 'M' then 1 else 0 end) as Male,
+sum(case when gender = 'F' then 1 else 0 end) as Female,
+count(id) as total from bigquery-public-data.thelook_ecommerce.users
+where id in (Select user_id from bigquery-public-data.thelook_ecommerce.orders where status = 'Complete' and created_at < '2024-07-01') 
+group by country
+order by total desc
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/31315caa-4fc5-493b-9727-69a4cd74dba6)
+
+5. Theo traffic source
+
+select traffic_source, 
+sum(case when gender = 'M' then 1 else 0 end) as Male,
+sum(case when gender = 'F' then 1 else 0 end) as Female,
+count(id) as total from bigquery-public-data.thelook_ecommerce.users
+where id in (Select user_id from bigquery-public-data.thelook_ecommerce.orders where status = 'Complete' and created_at < '2024-07-01') 
+group by traffic_source
+order by total desc
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/cfa8c0ed-27f8-4035-9cc4-ad0cd6415027)
 
 
 
