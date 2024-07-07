@@ -15,7 +15,7 @@ customerid: 135080
 
 Check duplicate: 5433 bản ghi
 
-Check validation:
+### 1.2. Check validation:
 select * from online_retail
 where quantity <= 0 or unitprice <= 0
 
@@ -23,4 +23,15 @@ where quantity <= 0 or unitprice <= 0
 
 Như vậy cần tạo bảng mới sau khi đã loại các dòng customerid bị null, quantity <= 0 và unitprice <=0 và duplicate.
 Bảng mới online_retail_clean có 392668 bản ghi
+
+## 2. Data analysis with Cohort analysis
+
+### 2.1 Customer Cohort
+
+
+### 2.2 Retention Cohort
+
+
+### 2.3 
+
 
