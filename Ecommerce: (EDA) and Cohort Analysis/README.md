@@ -1,7 +1,7 @@
 # theLook eCommerce: Exploratory Data Analysis (EDA) and Cohort Analysis 
 
-<img src="[https://[your-image-ur](https://static.appflow.ai/images/blog/1ed96a93-e8cc-4fae-8df8-1f4c635e640a.png)l.type](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/ee6419a4-4e20-4710-8f7e-67a93932a330)" width="600" height="400"/>
- 
+https://static.appflow.ai/images/blog/1ed96a93-e8cc-4fae-8df8-1f4c635e640a.png
+
 ## 1. Overview
 
 ### 1.1. Business Requirements:
