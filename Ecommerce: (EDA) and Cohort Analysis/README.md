@@ -1,6 +1,6 @@
 # theLook eCommerce: Exploratory Data Analysis (EDA) and Cohort Analysis 
 
-## Overview
+## 1. Overview
 Dataset in BigQuery
 TheLook is a fictitious eCommerce clothing site developed by the Looker team. The dataset contains information >about customers, products, orders, logistics, web events and digital marketing campaigns. The contents of this >dataset are synthetic, and are provided to industry practitioners for the purpose of product discovery, testing, and >evaluation.
 
@@ -8,7 +8,7 @@ I use the Big Query to do the project with SQL:
 Datasource: https://console.cloud.google.com/bigquery?p=bigquery-public-data&d=thelook_ecommerce&page=dataset&project=project-2-422702&ws=!1m15!1m4!1m3!1sproject-2-422702!2sbquxjob_63602b4b_1907d32f234!3sUS!1m4!4m3!1sbigquery-public-data!2sthelook_ecommerce!3sdistribution_centers!1m4!4m3!1sbigquery-public-data!2sthelook_ecommerce!3sproducts
 but you can download it on Kaggle: https://www.kaggle.com/datasets/mustafakeser4/looker-ecommerce-bigquery-dataset/code
 
-**Conducting the dataset in the period from 2019-01-13 - 20224-06-30**
+**Conducting the dataset in the period from 2019-01-13 - 2024-06-30**
 
 The dataset comprises of 7 tables:
 
@@ -112,9 +112,9 @@ The dataset comprises of 7 tables:
 || traffic_source| Source of the traffic leading to the user.
 || created_at| Timestamp indicating when the user account was created.
 
-## Data cleaning
+## 2. Data cleaning
 
-**1. Check NULL**
+**2.1. Check NULL**
 
 **ORDERS Table**
 
@@ -160,9 +160,11 @@ The dataset comprises of 7 tables:
 |8| sku | 0|
 |9| distribution_center_of | 0|
  
-**3. Check Duplicates**
+**2.2. Check Duplicates**
 
 ## Data exploratory
+
+**ORDERS and ORDER_ITEMS tables:**
 
 | # | Orders_table |   Order_items_table |
 | --- | --- | --- |   
@@ -172,11 +174,11 @@ The dataset comprises of 7 tables:
 
 After cross-checking data from the two tables, ORDERS and ORDER_ITEMS, I discovered that the total number of orders and the number of orders in each category differ between the two tables when applying the condition that considers orders created before July 2024. The reason I chose the column Created_at is because that column has no null values.
 
-I continued to check if there is any difference between the Created_at column in the ORDERS table and the ORDER_ITEMS table, considering the fact that the data might be recorded with different logic.
+I continued to check if there is any difference between the Created_at column in the ORDERS table and the ORDER_ITEMS table by using JOIN(), considering the fact that the data might be recorded with different logic.
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/b755a4d3-4f53-4b0e-a80d-27f4a6d4426b)
 
-The time an order is created and the time each item in the order is created are different. This raises additional concerns about the accuracy of the Created_at column in the ORDER_ITEMS table, as this issue does not occur in the ORDERS table where the Created_at date is never after the Shipped_at date. However, in the ORDER_ITEMS table, this issue occurs quite frequently (35,865 rows out of 181,427 rows, which is nearly 20%), not to mention the Shipped_at column has null values in as much as 30% of the rows.
+The time an order is created and the time each item in the order is created are different. This raises additional concerns about the accuracy of the Created_at column in the ORDER_ITEMS table, as this issue does not occur in the ORDERS table where the Created_at date is never after the Shipped_at date. However, in the ORDER_ITEMS table, this issue occurs quite frequently (35,865 rows out of 181,427 rows, which is nearly 20%), not to mention the Shipped_at column has null values in as much as 30% of the rows so we cannot update values of those entries to make it reasonable.
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/934a54eb-a64a-473c-bddc-d3767ed99a2f)
 
@@ -192,178 +194,34 @@ Considering that orders with the "Complete" status only account for 25% of the e
 
 I discovered that many orders from January 2019 are still in processing, and many orders from January 2019 are still in the shipped status but have not been completed. As it is unclear whether these orders will be completed, I decided to focus on "Complete" orders only for the analysis, as there is no stakeholder to clarify this point.
 
-Bảng order_items
+**##3. EDA**
 
-Tuy nhiên, tôi phát hiện bảng này xuất hiện các order_item được record về tháng-năm created at khác nhau sau khi chạy lệnh kiểm tra cho công thức để xác định số order mỗi tháng ở bảng order_items
-
-with cte as (
-select format_date('%Y-%m',created_at) as month_year,
-count(distinct(order_id)) as no_orders
-from bigquery-public-data.thelook_ecommerce.order_items
-where order_id in (select order_id from bigquery-public-data.thelook_ecommerce.orders where status = 'Complete' and created_at < '2024-07-01')
-group by month_year
-order by month_year desc)
-
-select sum(no_orders) from cte
-
-![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/e4170594-0c4f-4651-bb57-e9aba70e14e0)
-
-
-select 
-distinct(order_id), count(distinct(format_date('%Y-%m',created_at))) as num
-from bigquery-public-data.thelook_ecommerce.order_items
-where order_id in (select order_id from bigquery-public-data.thelook_ecommerce.orders where status = 'Complete' and created_at < '2024-07-01')
-group by order_id
-having num > 1
-
-![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/14272819-3503-41ff-a90f-af470de9e45e)
-
-=> xuất hiện 616 kết quả
-
-Chạy lại bảng order_items với các kết quả trên:
-
-![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/ecb91038-3770-4eeb-97cd-41f2d1b33ba5)
-
-Nhận xét có các record cùng số order, cùng user_id nhưng với các product khác nhau thì lại được tạo ở các ngày (created_at) khác nhau và thậm chí là khác tháng, có những order_item line mà ở đó, ngày created_at còn sau ngày được ship đi
-
-=> như vậy nếu thống kê theo số order của từng tháng sẽ không chính xác khi chạy hàm distinct.
-
-Như vậy lại quay ra nghi ngờ tính chính xác của cột created_at trong khi cột này là cột duy nhất không bị nhiều giá trị null như các cột ngày tháng còn lại như shipped_at, delivered_at và returned_at.
-
-Mình sẽ check kĩ hơn cột này để xem còn các order mà bị created_at các ngày khác nhau hay không. Ở trên là mới check sơ qua về việc khác tháng. hic
-
-select 
-distinct(order_id), count(distinct(format_date('%Y-%m-%d',created_at))) as num
-from bigquery-public-data.thelook_ecommerce.order_items
-where order_id in (select order_id from bigquery-public-data.thelook_ecommerce.orders where status = 'Complete' and created_at < '2024-07-01')
-group by order_id
-having num > 1
-
-![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/c3f15d0f-0273-4400-b026-73eafa3a32e7)
-
-Đúng vậy, không quá ngạc nhiên chúng ta ra 7887 order_id mà có các order_item bị created_at ở các ngày khác nhau và tương tự như phát hiện ở trên, nhiều trường hợp các order_id này có created_at sau ngày shipped_at
-
-with cte as (
-select 
-distinct(order_id), count(distinct(format_date('%Y-%m-%d',created_at))) as num
-from bigquery-public-data.thelook_ecommerce.order_items
-where order_id in (select order_id from bigquery-public-data.thelook_ecommerce.orders where status = 'Complete' and created_at < '2024-07-01')
-group by order_id
-having num > 1)
-
-select * from bigquery-public-data.thelook_ecommerce.order_items 
-where order_id in (Select order_id from cte)
-order by order_id, created_at
-
-![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/842e140f-47e5-458f-a66e-35e3fd30acc9)
-
-Rất may mắn là ở đây không có dòng nào mà cột shipped_at bị null, vậy nếu để sửa dữ liệu này (trong trường hợp ta chấp nhân các record bị sai là đơn giản là bị recorded sai) thì có thể sử dụng ngày min(created_at) group by order_id để apply cho các ngày khác cùng 1 order_id 
-
-1 phát hiện khác nữa khi join hai bảng orders và order_items:
-
-select a.order_id, a.created_at, b.order_id
-from bigquery-public-data.thelook_ecommerce.orders as a
-join bigquery-public-data.thelook_ecommerce.order_items as b
-on a.order_id = b.order_id
-order by a.order_id
-
-
-**1. The number of completed orders and user each month**
-
-![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/76b2dd76-4872-4549-8e75-2cf09ac3d2d7)
-
-we only consider orders with status = 'Complete'
-
-select count(Distinct(order_id)) as total_order,
-count(distinct(user_id)) as total_users from bigquery-public-data.thelook_ecommerce.orders
-where status = 'Complete' and created_at < '2024-07-01'
-
-![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/098aa9cb-9c8d-4567-8b0a-034414b81956)
-
-select 
-format_date('%Y-%m',created_at) as month_year,
-count(Distinct(order_id)) as total_orders,
-count(distinct(user_id)) as total_users
-from bigquery-public-data.thelook_ecommerce.orders
-where status = 'Complete' and created_at < '2024-07-01'
-group by month_year
-order by month_year desc
+**3.1. The number of completed orders and user each month**
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/4b5b9436-e885-4e3f-950d-651f1f7132b2)
 Number of orders and users increased month after month
 
-2. Giá trị đơn hàng trung bình (AOV) và số lượng khách hàng mỗi tháng
-Thống kê giá trị đơn hàng trung bình và tổng số người dùng khác nhau mỗi tháng 
-( Từ 1/2019-6/2024)
-
-select a.order_id, a.created_at, b.user_id, b.product_id, b.sale_price
-from bigquery-public-data.thelook_ecommerce.orders as a
-join bigquery-public-data.thelook_ecommerce.order_items as b
-on a.order_id = b.order_id
-where a.status = 'Complete' and a.created_at < '2024-07-01'
-order by a.order_id
-
-![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/659a932d-1926-45b8-a57c-972ef862317f)
-
-
-with cte as (
-select a.order_id, a.created_at, b.user_id, b.product_id, b.sale_price
-from bigquery-public-data.thelook_ecommerce.orders as a
-join bigquery-public-data.thelook_ecommerce.order_items as b
-on a.order_id = b.order_id
-where a.status = 'Complete' and a.created_at < '2024-07-01'
-order by a.order_id)
-
-select format_date('%Y-%m', created_at) as month_year,
-sum(sale_price)/count(distinct(order_id)) as AOV,
-count(distinct(user_id)) as user_number from cte
-group by month_year
-order by month_year desc
+**3.2. Average Order Value (AOV) and the number of customers per month** 
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/d5551d18-49e6-4c8f-9f10-8e50f1e14261)
 
-3. Nhóm khách hàng theo độ tuổi
-Tìm các khách hàng có trẻ tuổi nhất và lớn tuổi nhất theo từng giới tính
+**3.3. Customer segmentation by age and gender**
+ 
+Continuing from the previous session, I'm still debating whether to include statistics for customers in groups other than those with completed orders. Because I don't have high confidence in the dataset's quality, including customers from other groups would require additional analysis of order cancellations/completions/refunds per group of customers.
 
-Tiếp tục buổi hôm trước, mình vẫn đang phân vân về việc có thống kê khách hàng thuộc các nhóm khác ngoài nhóm có đơn hàng complete hay không. Vì thực tế mình k đánh giá cao chất lượng của dataset này. Nếu đưa khách hàng thuộc các nhóm khác vào vậy thì thường sẽ cần phải phân tích thêm với mỗi 1 nhóm các đơn hàng có trạng thái hủy/hoàn thành, phân bố nhóm khách hàng sẽ như thế nào.
+Which age/gender groups have higher rates of order cancellations/completions/returns? Here, I'm looking at age/gender as factors influencing shopping behaviors without considering reasons for cancellations/returns because that information isn't included in the dataset.
 
-NHững nhóm tuổi/giới tính nào có tỷ lệ hủy đơn/hoàn tất đơn/trả đơn hàng cao hơn. Ở đây đang tìm điểm xem xét là độ tuổi/giới tính có liên quan đến xu hướng, hành vi mua hàng không mà chưa xét đến lí do hủy đơn/hoàn hàng vì các thông tin đó không được đưa vào trong dataset.
-
-Vì tính thực tế của dữ liệu không có nên việc nghiên cứu sâu vào khía cạnh này để đưa ra phân tích là chưa cần thiết, vì vậy mình sẽ tiến hành query với nhóm đối tượng khách hàng đã hoàn thành đơn hàng (có status = Complete) => phải nối với bảng orders
-
-select age, 
-sum(case when gender = 'M' then 1 else 0 end) as Male,
-sum(case when gender = 'F' then 1 else 0 end) as Female,
-count(id)  from bigquery-public-data.thelook_ecommerce.users
-where id in (Select user_id from bigquery-public-data.thelook_ecommerce.orders where status = 'Complete' and created_at < '2024-07-01') 
-group by age
-order by age
+Due to the dataset's practical limitations, delving deeply into this aspect for analysis isn't necessary right now. Therefore, I will proceed with querying the group of customers who have completed orders (status = Complete) => which involves joining with the ORDERS table.
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/fabc997e-d6ef-4c39-ac13-de0bb5b75e9d)
 
-Độ tuổi KH từ 12-61
+Customers aged from 12 to 61 show no significant differences in purchasing power based on age or gender.
 
-4. Theo geography/country
-
-select country, 
-sum(case when gender = 'M' then 1 else 0 end) as Male,
-sum(case when gender = 'F' then 1 else 0 end) as Female,
-count(id) as total from bigquery-public-data.thelook_ecommerce.users
-where id in (Select user_id from bigquery-public-data.thelook_ecommerce.orders where status = 'Complete' and created_at < '2024-07-01') 
-group by country
-order by total desc
+**3.4. Customer segmentation by geography/country**
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/31315caa-4fc5-493b-9727-69a4cd74dba6)
 
-5. Theo traffic source
-
-select traffic_source, 
-sum(case when gender = 'M' then 1 else 0 end) as Male,
-sum(case when gender = 'F' then 1 else 0 end) as Female,
-count(id) as total from bigquery-public-data.thelook_ecommerce.users
-where id in (Select user_id from bigquery-public-data.thelook_ecommerce.orders where status = 'Complete' and created_at < '2024-07-01') 
-group by traffic_source
-order by total desc
+**3.5. Customer segmentation by traffic source**
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/cfa8c0ed-27f8-4035-9cc4-ad0cd6415027)
 
