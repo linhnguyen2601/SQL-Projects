@@ -21,15 +21,39 @@ ALTER COLUMN unitprice type float USING unitprice::double precision
 3. Check null
 
 select * from online_retail
-where invoiceno is null 
-or stockcode is null
-or description is null
-or quantity is null
-or invoicedate is null
-or unitprice is null
-or customerid is null
-or country is null
+    
+select * from online_retail
+where invoiceno = ''
+or stockcode = ''
+or description = ''
+or quantity = ''
+or invoicedate = ''
+or unitprice = ''
+or customerid = ''
+or country = ''
 
-=> There is no null value
+description and customerid    
 
+with cte as (
+select *,
+row_number() over(partition by invoiceno, stockcode, quantity order by invoicedate)
+	as rownumber
+from online_retail
+	order by rownumber desc)
+select * from cte where rownumber > 1
 
+=> There are 5433 duplicate rows over a total of 541909 rows
+=> Remove duplicate
+
+CREATE TABLE online_retail_clean as 
+(with cte as 
+	(
+select *,
+row_number() over(partition by invoiceno, stockcode, quantity order by invoicedate)
+	as rownumber
+from online_retail
+	order by rownumber desc)
+select invoiceno, stockcode, description, quantity, invoicedate, unitprice, customerid, country 
+	from cte where rownumber = 1 and (quantity > 0 and unitprice > 0) and customerid <> '')
+
+select * from online_retail_clean > 392668 bản ghi
