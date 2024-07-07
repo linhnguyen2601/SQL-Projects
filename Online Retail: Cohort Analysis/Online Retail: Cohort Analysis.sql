@@ -59,28 +59,35 @@ select invoiceno, stockcode, description, quantity, invoicedate, unitprice, cust
 select * from online_retail_clean > 392668 bản ghi
 
 3. Cohort analysis	
+3.1 Customer Cohort 
 with cte as(
 select customerid, quantity * unitprice as revenue, invoicedate,
 min(invoicedate) over(partition by customerid) as first_purchase from online_retail_clean
 ),
 cte2 as (
-select *,
+select *, TO_CHAR(first_purchase, 'YYYY-MM') AS month_year,
 	(extract(year from invoicedate) - extract(year from first_purchase))*12 +
-	(extract(month from invoicedate) - extract(month from first_purchase)) + 1 as index from cte
-)
-SELECT TO_CHAR(first_purchase, 'YYYY-MM') AS month_year,
-	sum(case when index = 1 then 1 else 0 end) as "1",
-	sum(case when index = 2 then 1 else 0 end) as "2",
-	sum(case when index = 3 then 1 else 0 end) as "3",
-	sum(case when index = 4 then 1 else 0 end) as "4",
-	sum(case when index = 5 then 1 else 0 end) as "5",
-	sum(case when index = 6 then 1 else 0 end) as "6",
-	sum(case when index = 7 then 1 else 0 end) as "7",
-	sum(case when index = 8 then 1 else 0 end) as "8",
-	sum(case when index = 9 then 1 else 0 end) as "9",
-	sum(case when index = 10 then 1 else 0 end) as "10",
-	sum(case when index = 11 then 1 else 0 end) as "11",
-	sum(case when index = 12 then 1 else 0 end) as "12",
-	sum(case when index = 13 then 1 else 0 end) as "13" from cte2
+	(extract(month from invoicedate) - extract(month from first_purchase)) + 1 as cohort_index from cte
+),
+cte3 as (
+select month_year, cohort_index, count(distinct(customerid)) as total_customer, sum(revenue) as revenue from cte2
+	group by month_year,cohort_index
+	)
+SELECT month_year,
+	sum(case when cohort_index = 1 then total_customer else 0 end) as "1",
+	sum(case when cohort_index = 2 then total_customer else 0 end) as "2",
+	sum(case when cohort_index = 3 then total_customer else 0 end) as "3",
+	sum(case when cohort_index = 4 then total_customer else 0 end) as "4",
+	sum(case when cohort_index = 5 then total_customer else 0 end) as "5",
+	sum(case when cohort_index = 6 then total_customer else 0 end) as "6",
+	sum(case when cohort_index = 7 then total_customer else 0 end) as "7",
+	sum(case when cohort_index = 8 then total_customer else 0 end) as "8",
+	sum(case when cohort_index = 9 then total_customer else 0 end) as "9",
+	sum(case when cohort_index = 10 then total_customer else 0 end) as "10",
+	sum(case when cohort_index = 11 then total_customer else 0 end) as "11",
+	sum(case when cohort_index = 12 then total_customer else 0 end) as "12",
+	sum(case when cohort_index = 13 then total_customer else 0 end) as "13" from cte3
 group by month_year
 order by month_year
+
+3.2 Revenue Cohort
