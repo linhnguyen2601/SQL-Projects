@@ -57,3 +57,30 @@ select invoiceno, stockcode, description, quantity, invoicedate, unitprice, cust
 	from cte where rownumber = 1 and (quantity > 0 and unitprice > 0) and customerid <> '')
 
 select * from online_retail_clean > 392668 bản ghi
+
+3. Cohort analysis	
+with cte as(
+select customerid, quantity * unitprice as revenue, invoicedate,
+min(invoicedate) over(partition by customerid) as first_purchase from online_retail_clean
+),
+cte2 as (
+select *,
+	(extract(year from invoicedate) - extract(year from first_purchase))*12 +
+	(extract(month from invoicedate) - extract(month from first_purchase)) + 1 as index from cte
+)
+SELECT TO_CHAR(first_purchase, 'YYYY-MM') AS month_year,
+	sum(case when index = 1 then 1 else 0 end) as "1",
+	sum(case when index = 2 then 1 else 0 end) as "2",
+	sum(case when index = 3 then 1 else 0 end) as "3",
+	sum(case when index = 4 then 1 else 0 end) as "4",
+	sum(case when index = 5 then 1 else 0 end) as "5",
+	sum(case when index = 6 then 1 else 0 end) as "6",
+	sum(case when index = 7 then 1 else 0 end) as "7",
+	sum(case when index = 8 then 1 else 0 end) as "8",
+	sum(case when index = 9 then 1 else 0 end) as "9",
+	sum(case when index = 10 then 1 else 0 end) as "10",
+	sum(case when index = 11 then 1 else 0 end) as "11",
+	sum(case when index = 12 then 1 else 0 end) as "12",
+	sum(case when index = 13 then 1 else 0 end) as "13" from cte2
+group by month_year
+order by month_year
