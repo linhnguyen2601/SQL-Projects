@@ -122,3 +122,24 @@ join bigquery-public-data.thelook_ecommerce.order_items as b
 on a.order_id = b.order_id
 order by a.order_id
 
+select count(Distinct(order_id)) as total_order,
+count(distinct(user_id)) as total_users from bigquery-public-data.thelook_ecommerce.orders
+where status = 'Complete' and created_at < '2024-07-01'
+
+ **3.1. The number of completed orders and user each month**
+select 
+format_date('%Y-%m',created_at) as month_year,
+count(Distinct(order_id)) as total_orders,
+count(distinct(user_id)) as total_users
+from bigquery-public-data.thelook_ecommerce.orders
+where status = 'Complete' and created_at < '2024-07-01'
+group by month_year
+order by month_year desc
+
+ **3.2. Average Order Value (AOV) and the number of customers per month** 
+select a.order_id, a.created_at, b.user_id, b.product_id, b.sale_price
+from bigquery-public-data.thelook_ecommerce.orders as a
+join bigquery-public-data.thelook_ecommerce.order_items as b
+on a.order_id = b.order_id
+where a.status = 'Complete' and a.created_at < '2024-07-01'
+order by a.order_id
