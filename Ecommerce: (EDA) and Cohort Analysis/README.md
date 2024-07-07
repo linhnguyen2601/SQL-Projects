@@ -112,6 +112,13 @@ The dataset comprises of 7 tables:
 || traffic_source| Source of the traffic leading to the user.
 || created_at| Timestamp indicating when the user account was created.
 
+However, we will be focusing only the following 4 tables:
+
+- orders: detailed description of each order
+- order_items: detailed description of items purchased for each order ID
+- products: detailed description of items sold on theLook
+- users: detailed description of all customers
+
 ## 2. Data cleaning
 
 **2.1. Check NULL**
@@ -161,6 +168,7 @@ The dataset comprises of 7 tables:
 |9| distribution_center_of | 0|
  
 **2.2. Check Duplicates**
+By using the ROW_NUMBER() function to group the data and setting the condition that it is greater than 1, we found that the dataset does not contain any duplicate data
 
 ## Data exploratory
 
@@ -239,25 +247,12 @@ The top-selling product with the highest profit is the AIR JORDAN DOMINATE SHORT
 
 **3.7. Revenue up to the end of June for each category.**
 
-with cte as(
-  select a.order_id, a.created_at, b.product_id, b.sale_price, c.category
-from bigquery-public-data.thelook_ecommerce.orders as a
-join bigquery-public-data.thelook_ecommerce.order_items as b
-on a.order_id = b.order_id
-join bigquery-public-data.thelook_ecommerce.products as c
-on b.product_id = c.id
-where a.status = 'Complete' and a.created_at < '2024-07-01'
-)
-
-select category, count(distinct(order_id)) as total_order, sum(sale_price) as revenue from cte
-group by category
-order by revenue desc
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/5874b73c-7193-40d5-8df1-f43b86699fd8)
 
 ## Dashboard
 
-Giả sử team của bạn đang cần dựng dashboard và có yêu cầu xử lý dữ liệu trước khi kết nối với BI tool. Sau khi bàn bạc, team của bạn quyết định các metric cần thiết cho dashboard và cần phải trích xuất dữ liệu từ database để ra được 1 dataset như mô tả 
+The necessary metrics for the dashboard and needs to extract data from the database to create a dataset as described.
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/eff8af4e-d181-49d1-a3ba-03260f08352c)
 
@@ -281,14 +276,16 @@ sum(sale_price - cost) as total_profit,
 sum(sale_price-cost)/sum(cost) as Profit_to_cost_ratio
 from cte
 group by month, year, product_Category
-)
+),
+cte3 as(
 select *, 
-lead(TPV) over(order by month, product_category) as revenue_growth,
-lead(TPO) over(order by month,product_category) as order_growth,
+lead(TPV) over(order by month, product_category) as previous_total_revenue,
+lead(TPO) over(order by month,product_category) as previous_total_order,
 from cte2
 order by year desc, month
+)
+select *, 
+
 
 ## Cohort Analysis
-
-
 
