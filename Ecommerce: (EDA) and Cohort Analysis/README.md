@@ -1,5 +1,7 @@
 # theLook eCommerce: Exploratory Data Analysis (EDA) and Cohort Analysis 
 
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/ee6419a4-4e20-4710-8f7e-67a93932a330)
+
 ## 1. Overview
 
 ### 1.1. Business Requirements:
@@ -132,6 +134,8 @@ However, we will be focusing only the following 4 tables:
 - order_items: detailed description of items purchased for each order ID
 - products: detailed description of items sold on theLook
 - users: detailed description of all customers
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/f79b8a7c-5d95-40c4-a4e5-21c83f76daa8)
 
 ## 2. Data cleaning
 
