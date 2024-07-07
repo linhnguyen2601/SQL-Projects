@@ -1,11 +1,25 @@
 # theLook eCommerce: Exploratory Data Analysis (EDA) and Cohort Analysis 
 
 ## 1. Overview
-Dataset in BigQuery
-TheLook is a fictitious eCommerce clothing site developed by the Looker team. The dataset contains information >about customers, products, orders, logistics, web events and digital marketing campaigns. The contents of this >dataset are synthetic, and are provided to industry practitioners for the purpose of product discovery, testing, and >evaluation.
+
+### 1. # About this project
+
+TheLook is a fictitious e-Commerce clothing site developed by the Looker team. 
+
+The Retention rate of the e-Commerce platform is alarmingly low, with 90% of new customers not returning. To address this issue, we will explore the following questions: 
+
+- What is the customer return rate of the platform?
+- Who are the customers that are leaving?
+- And what are the factors contributing to this high churn rate?
+
+**Goal**: design a strategic dashboard tailored for executive levels. Individuals at this level prefer streamlined dashboard without overly complex charts or excessive slicers.
+
+### 1.2. About the dataset:
+Dataset in BigQuery. The dataset contains information >about customers, products, orders, logistics, web events and digital marketing campaigns. The contents of this >dataset are synthetic, and are provided to industry practitioners for the purpose of product discovery, testing, and >evaluation.
 
 I use the Big Query to do the project with SQL:
 Datasource: https://console.cloud.google.com/bigquery?p=bigquery-public-data&d=thelook_ecommerce&page=dataset&project=project-2-422702&ws=!1m15!1m4!1m3!1sproject-2-422702!2sbquxjob_63602b4b_1907d32f234!3sUS!1m4!4m3!1sbigquery-public-data!2sthelook_ecommerce!3sdistribution_centers!1m4!4m3!1sbigquery-public-data!2sthelook_ecommerce!3sproducts
+
 but you can download it on Kaggle: https://www.kaggle.com/datasets/mustafakeser4/looker-ecommerce-bigquery-dataset/code
 
 **Conducting the dataset in the period from 2019-01-13 - 2024-06-30**
@@ -168,11 +182,14 @@ However, we will be focusing only the following 4 tables:
 |9| distribution_center_of | 0|
  
 **2.2. Check Duplicates**
+
 By using the ROW_NUMBER() function to group the data and setting the condition that it is greater than 1, we found that the dataset does not contain any duplicate data
 
-## Data exploratory
+## 3. Data analysis
 
-**ORDERS and ORDER_ITEMS tables:**
+### 3.1. Data validation:
+
+#### **Cross-field Validation: ORDERS and ORDER_ITEMS tables:**
 
 | # | Orders_table |   Order_items_table |
 | --- | --- | --- |   
@@ -202,18 +219,18 @@ Considering that orders with the "Complete" status only account for 25% of the e
 
 I discovered that many orders from January 2019 are still in processing, and many orders from January 2019 are still in the shipped status but have not been completed. As it is unclear whether these orders will be completed, I decided to focus on "Complete" orders only for the analysis, as there is no stakeholder to clarify this point.
 
-**##3. EDA**
+## 4. EDA
 
-**3.1. The number of completed orders and user each month**
+**4.1. The number of completed orders and user each month**
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/4b5b9436-e885-4e3f-950d-651f1f7132b2)
 Number of orders and users increased month after month
 
-**3.2. Average Order Value (AOV) and the number of customers per month** 
+**4.2. Average Order Value (AOV) and the number of customers per month** 
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/d5551d18-49e6-4c8f-9f10-8e50f1e14261)
 
-**3.3. Customer segmentation by age and gender**
+**4.3. Customer segmentation by age and gender**
  
 Continuing from the previous session, I'm still debating whether to include statistics for customers in groups other than those with completed orders. Because I don't have high confidence in the dataset's quality, including customers from other groups would require additional analysis of order cancellations/completions/refunds per group of customers.
 
@@ -225,15 +242,15 @@ Due to the dataset's practical limitations, delving deeply into this aspect for 
 
 Customers aged from 12 to 61 show no significant differences in purchasing power based on age or gender.
 
-**3.4. Customer segmentation by geography/country**
+**4.4. Customer segmentation by geography/country**
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/31315caa-4fc5-493b-9727-69a4cd74dba6)
 
-**3.5. Customer segmentation by traffic source**
+**4.5. Customer segmentation by traffic source**
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/cfa8c0ed-27f8-4035-9cc4-ad0cd6415027)
 
-**3.6. Statistical analysis of the top 5 most profitable products.**
+**4.6. Statistical analysis of the top 5 most profitable products.**
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/088e7795-b2af-41b5-a959-eb2f6f65bb8f)
 
@@ -245,7 +262,7 @@ Only 22,000 out of 29,000 products have been sold in orders that were completed 
 
 The top-selling product with the highest profit is the AIR JORDAN DOMINATE SHORTS MENS 465071-100.
 
-**3.7. Revenue up to the end of June for each category.**
+**4.7. Revenue up to the end of June for each category.**
 
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/5874b73c-7193-40d5-8df1-f43b86699fd8)
