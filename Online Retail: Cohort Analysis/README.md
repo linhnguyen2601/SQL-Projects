@@ -16,29 +16,42 @@ The dataset for the Online Retail Cohort Analysis comprises 541,909 customer pur
 
 ## 2. Data cleaning
 
-### 2.1. Check data type, check null, check duplicates, 
+### 2.1. Data Quality Checks: Data Type Validation, Null Values, and Duplicates
 
-Change data type: quantity to integer, invoicedate to date, unitprice to float.
+To ensure accurate analysis and data integrity, the dataset underwent data type adjustments for specific columns:
 
-Tổng số bản ghi: 541909 dòng
+- Quantity to Integer: The quantity field, representing the number of items purchased in each transaction, has been converted to an integer type to accurately reflect whole item counts and facilitate mathematical operations.
 
-Check null
+- InvoiceDate to Date: The invoicedate field, indicating the date of each transaction, has been converted to a date type. This ensures proper handling of date-related operations such as sorting, filtering, and date arithmetic.
 
-desciption is null: 1454
-customerid: 135080 
+- UnitPrice to Float: The unitprice field, denoting the price per unit of product, has been converted to a float type. This change allows for precise representation of decimal values, enabling accurate financial calculations and analysis.
 
-Check duplicate: 5433 bản ghi
+Results of Null Value Check:
 
-### 2.2. Check validation:
-select * from online_retail
-where quantity <= 0 or unitprice <= 0
+| # | Columns |   Null count |
+| --- | --- | --- |   
+| 1 | invoiceno | 0 |
+| 2 | stockcode | 0 |
+| 3 | description | 1454 |
+| 4 | quantity | 0|
+| 5 | invoicedate | 0|
+| 6 | unitprice | 0 |
+| 7 | customerid | 135080 |
+| 8 | country | 0 |
 
-=> 11805 bản ghi
+Results of Duplicate Value Check: 5433 entries
 
-Như vậy cần tạo bảng mới sau khi đã loại các dòng customerid bị null, quantity <= 0 và unitprice <=0 và duplicate.
-Bảng mới online_retail_clean có 392668 bản ghi
+### 2.2. Data Validation for Columns Requiring Values Greater Than 0:
 
-## 3. Data analysis with Cohort analysis
+There are a total of 11,805 records where either the quantity or unit price values are less than zero.
+
+Therefore, I create a new table after filtering out rows with null customer IDs, quantity ≤ 0, unit price ≤ 0, and duplicates.
+
+The new table, online_retail_clean, contains 392,668 records.
+
+## 3. Data analysis with Cohort analysis: Results and Dashboard
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/f9521853-836c-4cb0-b5ee-8b8b702d8b11)
 
 ### 3.1 Customer Cohort
 
