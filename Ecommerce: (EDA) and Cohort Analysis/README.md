@@ -2,7 +2,7 @@
 
 ## 1. Overview
 
-### 1. # About this project
+### 1.1. Business Requirements:
 
 TheLook is a fictitious e-Commerce clothing site developed by the Looker team. 
 
