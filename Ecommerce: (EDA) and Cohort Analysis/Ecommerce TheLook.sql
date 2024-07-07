@@ -74,6 +74,35 @@ shipped_at is null
  or distribution_center_id is null
  => các cột còn lại k có chứa giá trị null
 
+## Check duplicates
+
+SELECT * FROM (
+select  *,
+        ROW_NUMBER() OVER(
+        PARTITION BY order_id, user_id, product_id, inventory_item_id
+                        ) as stt
+from order_item
+) as tablet
+WHERE stt>1;
+
+SELECT * FROM (
+select  *,
+        ROW_NUMBER() OVER(
+                          PARTITION BY id, cost, category, name
+                        ) as stt
+from products
+) as tablet
+WHERE stt>1;
+
+SELECT * FROM (
+select  *,
+        ROW_NUMBER() OVER(
+                          PARTITION BY id
+                        ) as stt
+from users
+) as tablet
+WHERE stt>1;
+
 ## Data exploratory
 
 Determine dataset's time period:
@@ -181,3 +210,47 @@ where id in (Select user_id from bigquery-public-data.thelook_ecommerce.orders w
 group by traffic_source
 order by total desc
 
+**3.6. Statistical analysis of the top 5 most profitable products.**
+
+with cte as(
+  select a.order_id, a.created_at, b.product_id
+from bigquery-public-data.thelook_ecommerce.orders as a
+join bigquery-public-data.thelook_ecommerce.order_items as b
+on a.order_id = b.order_id
+where a.status = 'Complete' and a.created_at < '2024-07-01'
+order by a.order_id
+)
+select * from  bigquery-public-data.thelook_ecommerce.products
+where id in (Select product_id from cte)
+
+ 
+with cte as(
+  select a.order_id, a.created_at, b.product_id, b.sale_price, c.cost, c.name
+from bigquery-public-data.thelook_ecommerce.orders as a
+join bigquery-public-data.thelook_ecommerce.order_items as b
+on a.order_id = b.order_id
+join bigquery-public-data.thelook_ecommerce.products as c
+on b.product_id = c.id
+where a.status = 'Complete' and a.created_at < '2024-07-01'
+)
+select product_id, name, count(distinct(order_id)) as total_order, sum(sale_price - cost) as total_profit
+from cte
+group by product_id,name
+order by total_profit desc
+limit 5
+
+**3.7. Revenue up to the end of June for each category.**
+
+with cte as(
+  select a.order_id, a.created_at, b.product_id, b.sale_price, c.category
+from bigquery-public-data.thelook_ecommerce.orders as a
+join bigquery-public-data.thelook_ecommerce.order_items as b
+on a.order_id = b.order_id
+join bigquery-public-data.thelook_ecommerce.products as c
+on b.product_id = c.id
+where a.status = 'Complete' and a.created_at < '2024-07-01'
+)
+
+select category, count(distinct(order_id)) as total_order, sum(sale_price) as revenue from cte
+group by category
+order by revenue desc
