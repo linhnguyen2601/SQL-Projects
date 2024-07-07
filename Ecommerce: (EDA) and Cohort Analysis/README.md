@@ -116,120 +116,79 @@ The dataset comprises of 7 tables:
 
 **1. Check NULL**
 
-**Bảng orders**
+**ORDERS Table**
 
-select count(*)
- from bigquery-public-data.thelook_ecommerce.orders
- where order_id is null => 0
+| # | Columns |   Null count |
+| --- | --- | --- |   
+| 1 | order_id | 0 |
+| 2 | user_id | 0 |
+|3 | status | 0 |
+|4| gender | 0|
+|5| created_at | 0|
+|6| shipped_at | 44076|
+|7| returned_at | 113079|
+|8| delivered_at | 81698|
+|9| num_of_item | 0|
 
-select count(*)
- from bigquery-public-data.thelook_ecommerce.orders
- where user_id is null => 0
+**ORDER_ITEMS table**
 
- select count(*)
- from bigquery-public-data.thelook_ecommerce.orders
- where status is null => 0
+| # | Columns |   Null count |
+| --- | --- | --- |   
+| 1 | id | 0 |
+| 2 | order_id | 0 |
+| 3 | user_id | 0 |
+|4 | product_id | 0 |
+|5| inventory_item_id | 0|
+|6 | status | 0 |
+|7| created_at | 0|
+|8| shipped_at | 44076|
+|9| returned_at | 113079|
+|10| delivered_at | 81698|
+|11| sale_price | 0|
 
- select count(*)
- from bigquery-public-data.thelook_ecommerce.orders
- where gender is null
+**PRODUCTS table**
 
- select count(*)
- from bigquery-public-data.thelook_ecommerce.orders
- where order_id is null 
- or user_id is null
- or status is null
- or gender is null 
- or created_at is null 
- or returned_at is null
- =>> null: 113097
-
- ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/035f5e73-a2bc-4d34-a6bf-66011d6c5a83)
-
-select count(*)
- from bigquery-public-data.thelook_ecommerce.orders
- where shipped_at is null
-=> 44076
-
-select count(*)
- from bigquery-public-data.thelook_ecommerce.orders
- where delivered_at is null
- => 81698
-
-  select count(*)
- from bigquery-public-data.thelook_ecommerce.orders
- where num_of_item is null
- => không có null
-
- => bảng orders có 3 cột chứ gt null là returned_at, shipped_at, delivered_at
-
-**Bảng order_items**
-
- select count(*) from bigquery-public-data.thelook_ecommerce.order_items
- where id is null
- or order_id is null
- or user_id is null
- or product_id is null
- or inventory_item_id is null
- or status is null
- or created_at is null
-
-=> không có giá trị null
-
-select count(*) from bigquery-public-data.thelook_ecommerce.order_items
-shipped_at is null
-
-Tương tự bảng trên có returned_at, shipped_at, delivered_at có gt null
-
-**Bảng Products**
-
- select count(*) from bigquery-public-data.thelook_ecommerce.products
- where id is null
- or cost is null
- or category is null
- or name is null
- => name null 2, brand null 24, 
-
- select count(*) from bigquery-public-data.thelook_ecommerce.products
- where 
- retail_price is null
- or department is null
- or sku is null
- or distribution_center_id is null
- => các cột còn lại k có chứa giá trị null
+| # | Columns |   Null count |
+| --- | --- | --- |   
+| 1 | id | 0 |
+| 2 | cost | 0 |
+|3 | category | 0 |
+|4| name | 0|
+|5| brand | 0|
+|6| retail_price | 0|
+|7| department | 0|
+|8| sku | 0|
+|9| distribution_center_of | 0|
  
 **3. Check Duplicates**
 
 ## Data exploratory
 
-Determine dataset's time period:
-select min(created_at) as start_period, max(created_at) as end_period
- from bigquery-public-data.thelook_ecommerce.orders
+| # | Orders_table |   Order_items_table |
+| --- | --- | --- |   
+| Total orders | 120386 | 120314 |
 
-![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/e67de495-e1bb-4ee3-8226-e74d9b0c1b77)
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/a6fc2d26-507f-4847-8d6c-8c74fc4f052f)
 
-select count(distinct(order_id)) from bigquery-public-data.thelook_ecommerce.orders
-where created_at < '2024-07-01'
+After cross-check data from two tables ORDERS and ORDER_ITEMS, I discovered that the number of total orders and the number of orders in each category are different across two tables when appply the condition that I consider order created before July 2024. The reason I chosed the Column Created_at is because that column hss no null value.
 
-=>> 120806 orders
+I continue to check if there is any difference between the created_at column in the ORDERS table and ORDER_ITEMS table, considering the fact that the data might be recorded with difference logic. 
 
-select count(distinct(order_id)) from bigquery-public-data.thelook_ecommerce.order_items 
-where created_at < '2024-07-01'
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/b755a4d3-4f53-4b0e-a80d-27f4a6d4426b)
 
-=> 120735 orders
+Thời gian đơn hàng đc tạo và thời gian từng item trong đơn hàng được tạo là khác nhau, như vậy mình nghi ngờ thêm về tính chính xác của cột created_at của bảng order_items vì ở bảng orders không xảy ra tình trạng ngày ở cột created_at sau ngày shipped_at nhưng ở bảng order_items thì tình trạng này xảy ra khá nhiều (35865 dòng/trên tổng 181427 dòng ~ gần 20%):
 
-select status, count(distinct(order_id)) from bigquery-public-data.thelook_ecommerce.orders
-where created_at < '2024-07-01'
-group by status
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/934a54eb-a64a-473c-bddc-d3767ed99a2f)
 
-![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/58fb898d-c766-437c-9142-ceac72c2285d)
+chưa kể cột shipped_at còn bị null khá nhiều (63K dòng)
+
+Vì vậy mình sẽ sử dụng cột created_at của bảng orders khi join 2 bảng orders và order_item
+
 
 Từ bảng này t nhận thấy tỷ lệ đơn hàng Complete chỉ chiêm ~ 25% tổng số đơn hàng. Điều này dẫn tới các nghi vấn sau:
 
 - Có nhiều đơn hàng phát sinh trong các tháng gần dây nên trạng thái processing và shipped đang cao?
 - Nếu không phải thì do các đơn hàng chưa được cập nhật trạng thái?
-- 
-
 
 select 
 format_date('%Y-%m',created_at) as month_year,
@@ -253,17 +212,13 @@ where status = 'Shipped' and created_at < '2024-07-01'
 group by month_year
 order by month_year
 
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/0f9eb180-6531-4684-ab50-e8b6747b67e2)
 
 Nhiều đơn hàng từ 1/2019 vẫn đang trong tình trạng shipped nhưng chưa được hoàn thành?
 
 Vì không rõ outcome của các đơn hàng này có complete hay không nên I decided to focus on "Complete" orders, ignoring the Shipped and Processing as there is no stakeholder to clarify this point. 
 
 Bảng order_items
-
-select count(Distinct(order_id)) from bigquery-public-data.thelook_ecommerce.order_items
-where order_id in (select order_id from bigquery-public-data.thelook_ecommerce.orders where status = 'Complete' and created_at < '2024-07-01')
-
-=> 30514 orders => đúng so với bảng orders
 
 Tuy nhiên, tôi phát hiện bảng này xuất hiện các order_item được record về tháng-năm created at khác nhau sau khi chạy lệnh kiểm tra cho công thức để xác định số order mỗi tháng ở bảng order_items
 
@@ -338,15 +293,6 @@ join bigquery-public-data.thelook_ecommerce.order_items as b
 on a.order_id = b.order_id
 order by a.order_id
 
-![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/b755a4d3-4f53-4b0e-a80d-27f4a6d4426b)
-
-Thời gian đơn hàng đc tạo và thời gian từng item trong đơn hàng được tạo là khác nhau, như vậy mình nghi ngờ thêm về tính chính xác của cột created_at của bảng order_items vì ở bảng orders không xảy ra tình trạng ngày ở cột created_at sau ngày shipped_at nhưng ở bảng order_items thì tình trạng này xảy ra khá nhiều (35865 dòng/trên tổng 181427 dòng ~ gần 20%):
-
-![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/934a54eb-a64a-473c-bddc-d3767ed99a2f)
-
-chưa kể cột shipped_at còn bị null khá nhiều (63K dòng)
-
-Vì vậy mình sẽ sử dụng cột created_at của bảng orders khi join 2 bảng orders và order_item
 
 **1. The number of completed orders and user each month**
 
