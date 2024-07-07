@@ -170,53 +170,27 @@ The dataset comprises of 7 tables:
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/a6fc2d26-507f-4847-8d6c-8c74fc4f052f)
 
-After cross-check data from two tables ORDERS and ORDER_ITEMS, I discovered that the number of total orders and the number of orders in each category are different across two tables when appply the condition that I consider order created before July 2024. The reason I chosed the Column Created_at is because that column hss no null value.
+After cross-checking data from the two tables, ORDERS and ORDER_ITEMS, I discovered that the total number of orders and the number of orders in each category differ between the two tables when applying the condition that considers orders created before July 2024. The reason I chose the column Created_at is because that column has no null values.
 
-I continue to check if there is any difference between the created_at column in the ORDERS table and ORDER_ITEMS table, considering the fact that the data might be recorded with difference logic. 
+I continued to check if there is any difference between the Created_at column in the ORDERS table and the ORDER_ITEMS table, considering the fact that the data might be recorded with different logic.
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/b755a4d3-4f53-4b0e-a80d-27f4a6d4426b)
 
-Thời gian đơn hàng đc tạo và thời gian từng item trong đơn hàng được tạo là khác nhau, như vậy mình nghi ngờ thêm về tính chính xác của cột created_at của bảng order_items vì ở bảng orders không xảy ra tình trạng ngày ở cột created_at sau ngày shipped_at nhưng ở bảng order_items thì tình trạng này xảy ra khá nhiều (35865 dòng/trên tổng 181427 dòng ~ gần 20%):
+The time an order is created and the time each item in the order is created are different. This raises additional concerns about the accuracy of the Created_at column in the ORDER_ITEMS table, as this issue does not occur in the ORDERS table where the Created_at date is never after the Shipped_at date. However, in the ORDER_ITEMS table, this issue occurs quite frequently (35,865 rows out of 181,427 rows, which is nearly 20%), not to mention the Shipped_at column has null values in as much as 30% of the rows.
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/934a54eb-a64a-473c-bddc-d3767ed99a2f)
 
-chưa kể cột shipped_at còn bị null khá nhiều (63K dòng)
+Therefore, I will use the Created_at column from the ORDERS table when joining the ORDERS and ORDER_ITEMS tables.
 
-Vì vậy mình sẽ sử dụng cột created_at của bảng orders khi join 2 bảng orders và order_item
-
-
-Từ bảng này t nhận thấy tỷ lệ đơn hàng Complete chỉ chiêm ~ 25% tổng số đơn hàng. Điều này dẫn tới các nghi vấn sau:
-
-- Có nhiều đơn hàng phát sinh trong các tháng gần dây nên trạng thái processing và shipped đang cao?
-- Nếu không phải thì do các đơn hàng chưa được cập nhật trạng thái?
-
-select 
-format_date('%Y-%m',created_at) as month_year,
-avg(Distinct(order_id)) as total_orders,
-count(distinct(user_id)) as total_users
-from bigquery-public-data.thelook_ecommerce.orders
-where status = 'Processing' and created_at < '2024-07-01'
-group by month_year
-order by month_year
+Considering that orders with the "Complete" status only account for 25% of the entire ORDERS table, while orders with the "Processing" and "Shipped" statuses make up more than 50% of the table, I will check the validity of these two status categories.
+- Are there many orders generated in recent months, causing the "Processing" and "Shipped" statuses to be high?
+- If not, is it because the orders have not been updated to the correct status?
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/aa16d8b1-c272-4a2b-b441-3e0bac79680e)
 
-Có nhiều đơn hàng từ tháng 1/2019 vẫn đang processing?
-
-select 
-format_date('%Y-%m',created_at) as month_year,
-avg(Distinct(order_id)) as total_orders,
-count(distinct(user_id)) as total_users
-from bigquery-public-data.thelook_ecommerce.orders
-where status = 'Shipped' and created_at < '2024-07-01'
-group by month_year
-order by month_year
-
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/0f9eb180-6531-4684-ab50-e8b6747b67e2)
 
-Nhiều đơn hàng từ 1/2019 vẫn đang trong tình trạng shipped nhưng chưa được hoàn thành?
-
-Vì không rõ outcome của các đơn hàng này có complete hay không nên I decided to focus on "Complete" orders, ignoring the Shipped and Processing as there is no stakeholder to clarify this point. 
+I discovered that many orders from January 2019 are still in processing, and many orders from January 2019 are still in the shipped status but have not been completed. As it is unclear whether these orders will be completed, I decided to focus on "Complete" orders only for the analysis, as there is no stakeholder to clarify this point.
 
 Bảng order_items
 
