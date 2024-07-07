@@ -1,6 +1,6 @@
 # theLook eCommerce: Exploratory Data Analysis (EDA) and Cohort Analysis 
 
-![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/ee6419a4-4e20-4710-8f7e-67a93932a330)
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/ee6419a4-4e20-4710-8f7e-67a93932a330 | width=100)
 
 ## 1. Overview
 
