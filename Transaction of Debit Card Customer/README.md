@@ -42,9 +42,42 @@ There is no null value and duplicate value.
 
 ### 3.1. How many transactions and what is the total amount for each transaction type?
 
-Transaction type	Total amount
-deposit	 1,359,168.0 
-purchase	 806,537.0 
-withdrawal	 793,003.0 
-Grand Total	 2,958,708.0 
-![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/21f22b9f-e4bc-4e4a-964e-a113883aeb14)
+```
+select txn_type, sum(txn_amount), count(txn_amount)
+  from data_bank.customer_transactions
+  group by txn_type
+UNION
+select '', sum(txn_amount), count(txn_amount)
+  from data_bank.customer_transactions
+```
+
+| # | Transaction type |  Total amount | Number of transaction|
+| --- | --- | --- |   --- |
+| 1 | deposit	 | 1,359,168.0  | 2,671|
+| 2 | purchase | 806,537.0   | 1,617|
+| 3 | withdrawal	 | 793,003.0   | 1,580|
+||Grand Total|2,958,708.0 |5,868|
+
+### 3.2. What is the average number and amount of deposit transactions for all customers?
+
+### 3.3. In each month, how many customers of the bank make more than one deposit or one purchase or one withdrawal in a month?
+
+```
+with cte as(
+select Customer_id, extract(month from txn_date) as month, txn_type, count(txn_amount) as number_of_turn from data_bank.customer_transactions
+group by Customer_id, month, txn_type
+having count(txn_amount) > 1)
+select month, count(Customer_id) as number_of_customers from cte
+group by month
+order by month
+```
+
+| Month | Number_of_customers |
+| --- | --- | 
+| 1 | 375 |
+| 2 | 467 |
+| 3 | 519 |
+| 4 | 185 |
+
+### 3.4. What is the end-of-period balance for each customer at the end of the month?
+
