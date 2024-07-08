@@ -112,3 +112,26 @@ order by Customer_id, month)
 select month, customer_id, deposit_amount - purchase_amount - withdrawal_amount as balance
 from cte
 ```
+
+```
+with cte as(
+  select extract(month from txn_date) as month, Customer_id, 
+    sum(case when txn_type = 'withdrawal' then txn_amount else 0 end) as withdrawal_amount,
+    sum(case when txn_type = 'deposit' then txn_amount else 0 end) as deposit_amount,
+    sum(case when txn_type = 'purchase' then txn_amount else 0 end) as purchase_amount
+    from data_bank.customer_transactions
+    group by month, customer_id 
+    order by Customer_id, month),
+cte2 as (
+  select month, customer_id, deposit_amount - purchase_amount - withdrawal_amount as balance
+    from cte),
+cte3 as(
+  select month, customer_id, balance,
+  lead(balance) over(partition by customer_id order by month) as next_balance from cte2),
+cte4 as(
+  select month, customer_id, (next_balance - balance)*100.0/balance as balance_change from cte3
+    where (next_balance - balance)*100.0/balance > 5)
+select count(distinct(Customer_id))*100.0/(select count(Distinct(customer_id)) from data_bank.customer_transactions) from cte4
+```
+
+Result: 53.8% of customers increase their end-of-period balance by more than 5%
