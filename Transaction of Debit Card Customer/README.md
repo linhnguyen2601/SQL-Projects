@@ -81,3 +81,31 @@ order by month
 
 ### 3.4. What is the end-of-period balance for each customer at the end of the month?
 
+Tính balance cho mỗi kì:
+```
+with cte as(
+select extract(month from txn_date) as month, Customer_id, 
+sum(case when txn_type = 'withdrawal' then txn_amount else 0 end) as withdrawal_amount,
+sum(case when txn_type = 'deposit' then txn_amount else 0 end) as deposit_amount,
+sum(case when txn_type = 'purchase' then txn_amount else 0 end) as purchase_amount
+from data_bank.customer_transactions
+group by month, customer_id 
+order by Customer_id, month)
+
+select month, customer_id, deposit_amount - purchase_amount - withdrawal_amount as balance
+from cte
+```
+Tính balance cho tháng cuối cùng:
+```
+with cte as(
+select Customer_id, 
+sum(case when txn_type = 'withdrawal' then txn_amount else 0 end) as withdrawal_amount,
+sum(case when txn_type = 'deposit' then txn_amount else 0 end) as deposit_amount,
+sum(case when txn_type = 'purchase' then txn_amount else 0 end) as purchase_amount
+from data_bank.customer_transactions
+group by customer_id 
+order by Customer_id)
+
+select customer_id, deposit_amount - purchase_amount - withdrawal_amount as balance
+from cte
+```
