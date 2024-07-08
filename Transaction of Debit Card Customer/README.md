@@ -93,6 +93,7 @@ from data_bank.customer_transactions
 group by month
 order by month
 ```
+
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/b1350071-b426-4caa-ac15-09bed871b14f)
 
 ```
@@ -108,6 +109,7 @@ from cte
 group by month
 order by month
 ```
+
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/4792a586-4491-4dcd-b97b-b3691cb3bd46)
 
 
@@ -150,6 +152,7 @@ from cte
 ### 3.5. What percentage of customers increase their end-of-period balance by more than 5%?
 
 Tính balance cho mỗi kì:
+
 ```
 with cte as(
 select extract(month from txn_date) as month, Customer_id, 
@@ -208,6 +211,11 @@ from cte3
 group by month_year
 ```
 
+
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/8ffe78fd-4d55-4ba4-b7ef-55ae0938fe8b)
 
-The data indicates that there were no new customers in the three months following the initial month
+
+The data indicates that there were no new customers in the three months following the initial month. 
+To address the lack of new customers over the period, the bank could conduct a thorough analysis to identify potential causes, such as market trends and competitor activities. 
+
+The bank can enhance its marketing strategies with targeted campaigns and promotions, improve customer experience on digital platforms, and offer personalized products or services. Additionally, the bank could consider partnerships and affiliate marketing to broaden its reach.  
