@@ -57,12 +57,19 @@ The new table, online_retail_clean, contains 392,668 records.
 
 Customer cohorts are groups of customers identified by the month they first engaged with a product or service. Measurement involves tracking their behavior and performance over time to understand retention, purchasing patterns, and lifetime value.
 
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/2ef859c8-44ba-4e0a-9d76-f59060a55ff5)
 
 
 ### 3.2 Retention Cohort
 
-A retention cohort measured in months for 13 months involves analyzing groups of customers based on the month they first engaged with a product or service. Each cohort represents customers who started their relationship in a specific month, and retention is tracked over the following 13 months to observe how many customers remain engaged or active over time. This approach helps businesses understand long-term customer retention trends and assess the effectiveness of retention strategies implemented over monthly intervals.
+A retention cohort measured in months for 13 months involves analyzing groups of customers based on the month they first engaged with a product or service. Each cohort represents customers who started their relationship in a specific month, and retention is tracked over the following 12 months to observe how many customers remain engaged or active over time. This approach helps businesses understand long-term customer retention trends and assess the effectiveness of retention strategies implemented over monthly intervals.
 
-### 3.3 
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/565571d6-d836-4ad4-bf0f-c8a548b03e94)
+
+### 3.3 Churn Cohort
+
+A churn cohort measured in months for 13 months involves analyzing groups of customers based on the month they first engaged with a product or service. Each cohort represents customers who started their relationship in a specific month, and churn is tracked over the following 12 months to observe how many customers discontinue their engagement or become inactive over time. 
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/dd718147-559c-469c-945a-ea353fb3f83c)
 
 
