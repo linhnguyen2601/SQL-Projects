@@ -254,3 +254,5 @@ where a.status = 'Complete' and a.created_at < '2024-07-01'
 select category, count(distinct(order_id)) as total_order, sum(sale_price) as revenue from cte
 group by category
 order by revenue desc
+
+**3.8.  Cohort Analysis.**
