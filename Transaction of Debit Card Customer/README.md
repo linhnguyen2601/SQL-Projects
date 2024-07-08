@@ -21,7 +21,18 @@ txn_amount: transaction amount
 Answer the following questions:
 
 How many transactions and what is the total amount for each transaction type?
+
 What is the average number and amount of deposit transactions for all customers?
+
 In each month, how many customers of the bank make more than one deposit and one purchase or one withdrawal in a month?
+
 What is the end-of-period balance for each customer at the end of the month?
+
 What percentage of customers increase their end-of-period balance by more than 5%?
+
+# 2. Data cleaning
+
+# 3. Analysis
+
+## 3.1. How many transactions and what is the total amount for each transaction type?
+
