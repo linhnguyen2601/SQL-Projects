@@ -93,7 +93,22 @@ from data_bank.customer_transactions
 group by month
 order by month
 ```
-![Uploading image.png…]()
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/b1350071-b426-4caa-ac15-09bed871b14f)
+
+```
+with cte as(
+select extract(month from txn_date) as month, txn_type, count(distinct(customer_id)) as total_customer
+from data_bank.customer_transactions
+group by month, txn_type)
+select month, 
+sum(case when txn_type = 'deposit' then total_customer else 0 end) as deposit_customer,
+sum(case when txn_type = 'withdrawal' then total_customer else 0 end) as withdrawal_customer,
+sum(case when txn_type = 'purchase' then total_customer else 0 end) as purchase_customer
+from cte
+group by month
+order by month
+```
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/4792a586-4491-4dcd-b97b-b3691cb3bd46)
 
 
 ### 3.3. In each month, how many customers of the bank make more than one deposit or one purchase or one withdrawal in a month?
