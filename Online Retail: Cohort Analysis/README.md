@@ -55,9 +55,13 @@ The new table, online_retail_clean, contains 392,668 records.
 
 ### 3.1 Customer Cohort
 
+Customer cohorts are groups of customers identified by the month they first engaged with a product or service. Measurement involves tracking their behavior and performance over time to understand retention, purchasing patterns, and lifetime value.
+
+
 
 ### 3.2 Retention Cohort
 
+A retention cohort measured in months for 13 months involves analyzing groups of customers based on the month they first engaged with a product or service. Each cohort represents customers who started their relationship in a specific month, and retention is tracked over the following 13 months to observe how many customers remain engaged or active over time. This approach helps businesses understand long-term customer retention trends and assess the effectiveness of retention strategies implemented over monthly intervals.
 
 ### 3.3 
 
