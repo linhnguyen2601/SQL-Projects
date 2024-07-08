@@ -22,15 +22,15 @@ The dataset data_bank.customer_transactions includes debit card transactions of 
 
 Answer the following questions:
 
-How many transactions and what is the total amount for each transaction type?
+- How many transactions and what is the total amount for each transaction type?
 
-What is the average number and amount of deposit transactions for all customers?
+- What is the average number and amount of deposit transactions for all customers?
 
-In each month, how many customers of the bank make more than one deposit and one purchase or one withdrawal in a month?
+- In each month, how many customers of the bank make more than one deposit and one purchase or one withdrawal in a month?
 
-What is the end-of-period balance for each customer at the end of the month?
+- What is the end-of-period balance for each customer at the end of the month?
 
-What percentage of customers increase their end-of-period balance by more than 5%?
+- What percentage of customers increase their end-of-period balance by more than 5%?
 
 ## 2. Data cleaning
 
@@ -81,20 +81,6 @@ order by month
 
 ### 3.4. What is the end-of-period balance for each customer at the end of the month?
 
-Tính balance cho mỗi kì:
-```
-with cte as(
-select extract(month from txn_date) as month, Customer_id, 
-sum(case when txn_type = 'withdrawal' then txn_amount else 0 end) as withdrawal_amount,
-sum(case when txn_type = 'deposit' then txn_amount else 0 end) as deposit_amount,
-sum(case when txn_type = 'purchase' then txn_amount else 0 end) as purchase_amount
-from data_bank.customer_transactions
-group by month, customer_id 
-order by Customer_id, month)
-
-select month, customer_id, deposit_amount - purchase_amount - withdrawal_amount as balance
-from cte
-```
 Tính balance cho tháng cuối cùng:
 ```
 with cte as(
@@ -107,5 +93,22 @@ group by customer_id
 order by Customer_id)
 
 select customer_id, deposit_amount - purchase_amount - withdrawal_amount as balance
+from cte
+```
+
+### 3.5. What percentage of customers increase their end-of-period balance by more than 5%?
+
+Tính balance cho mỗi kì:
+```
+with cte as(
+select extract(month from txn_date) as month, Customer_id, 
+sum(case when txn_type = 'withdrawal' then txn_amount else 0 end) as withdrawal_amount,
+sum(case when txn_type = 'deposit' then txn_amount else 0 end) as deposit_amount,
+sum(case when txn_type = 'purchase' then txn_amount else 0 end) as purchase_amount
+from data_bank.customer_transactions
+group by month, customer_id 
+order by Customer_id, month)
+
+select month, customer_id, deposit_amount - purchase_amount - withdrawal_amount as balance
 from cte
 ```
