@@ -22,9 +22,10 @@ The dataset data_bank.customer_transactions includes debit card transactions of 
 
 Answer the following questions:
 
-- How many transactions and what is the total amount for each transaction type?
+- How many transactions and what is the total amount for each transaction type? What is the average number and amount of deposit transactions for all customers?
 
-- What is the average number and amount of deposit transactions for all customers?
+- What is the monthly trend in the number of transactions for each transaction type?
+Which customers have the highest transaction amounts on average per month?
 
 - In each month, how many customers of the bank make more than one deposit and one purchase or one withdrawal in a month?
 
@@ -35,13 +36,25 @@ Answer the following questions:
 ## 2. Data cleaning
 
 ### 2.1. Data Quality Checks: Data Type Validation, Null Values, and Duplicates
+```
+select * from data_bank.customer_transactions
+where customer_id is null
+or txn_date is null 
+or txn_type = ' '
+or  txn_type is null
+```
 
+```
+select * from (
+select customer_id,txn_date,txn_type, txn_amount,
+row_number() over(partition by customer_id, txn_date, txn_type, txn_amount) as stt from data_bank.customer_transactions) as a
+where stt > 1
+```
 There is no null value and duplicate value.
 
 ## 3. Analysis
 
-### 3.1. How many transactions and what is the total amount for each transaction type?
-
+### 3.1. How many transactions and what is the total amount for each transaction type? What is the average number and amount of deposit transactions for all customers?
 ```
 select txn_type, sum(txn_amount), count(txn_amount)
   from data_bank.customer_transactions
@@ -58,7 +71,30 @@ select '', sum(txn_amount), count(txn_amount)
 | 3 | withdrawal	 | 793,003.0   | 1,580|
 ||Grand Total|2,958,708.0 |5,868|
 
-### 3.2. What is the average number and amount of deposit transactions for all customers?
+### 3.2. What is the monthly trend in the amount, the number of transactions for each transaction type?
+
+```
+select extract(month from txn_date) as month, 
+sum(case when txn_type = 'deposit' then txn_amount else 0 end) as deposit_amount,
+sum(Case when txn_type = 'withdrawal' then txn_amount else 0 end) as withdrawal_amount,
+sum(case when txn_type = 'purchase' then txn_amount else 0 end) as purchase_amount
+from data_bank.customer_transactions
+group by month
+order by month
+```
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/87439a2b-1031-4b5d-a36a-73ab57b0df83)
+
+```
+select extract(month from txn_date) as month, 
+sum(case when txn_type = 'deposit' then 1 else 0 end) as count_deposit,
+sum(Case when txn_type = 'withdrawal' then 1 else 0 end) as count_withdrawal,
+sum(case when txn_type = 'purchase' then 1 else 0 end) as count_purchase
+from data_bank.customer_transactions
+group by month
+order by month
+```
+![Uploading image.png…]()
+
 
 ### 3.3. In each month, how many customers of the bank make more than one deposit or one purchase or one withdrawal in a month?
 
