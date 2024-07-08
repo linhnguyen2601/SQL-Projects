@@ -186,3 +186,28 @@ select count(distinct(Customer_id))*100.0/(select count(Distinct(customer_id)) f
 ```
 
 Result: 53.8% of customers increase their end-of-period balance by more than 5%
+
+```
+with cte as (
+select *, 
+min(txn_date) over(partition by customer_id) as first_transaction from data_bank.customer_transactions
+), 
+cte2 as (
+select *, extract(month from txn_date) - extract(month from first_transaction) + 1 as cohort_index from cte
+),
+cte3 as (
+select to_char(first_transaction, 'YYYY-mm') as month_year, cohort_index, count(Distinct(customer_id)) as count_customer, sum(txn_amount) from cte2
+group by to_char(first_transaction, 'YYYY-mm'), cohort_index
+)
+select month_year,
+sum(case when cohort_index = 1 then count_customer else 0 end) as m1,
+sum(case when cohort_index = 2 then count_customer else 0 end) as m2,
+sum(case when cohort_index = 3 then count_customer else 0 end) as m3,
+sum(case when cohort_index = 4 then count_customer else 0 end) as m4
+from cte3
+group by month_year
+```
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/8ffe78fd-4d55-4ba4-b7ef-55ae0938fe8b)
+
+The data indicates that there were no new customers in the three months following the initial month
