@@ -3,7 +3,7 @@
 Dataset: https://about.netflix.com/en/news/what-we-watched-a-netflix-engagement-report
 Source code: 
 
-## 1. About Dataset
+About Dataset
 Netflix published the first half of 2023 engagement data. 
 This included the hours viewed (rounded to 100,000 hours), the premiere data and whether the title was available globally for Netflix TV series or films.
 
@@ -12,8 +12,3 @@ Title: Title of the movie or series.
 Available Globally?: Is the show available globally or not. Yes or No.
 Release Date: Release date of the show.
 Hours Viewed: Hours viewrship of the show.
-
-## 2.  Importing the data
-## 3.  Look at Dataset¶
-## 4. Create new columns
-## 5. 
