@@ -215,10 +215,13 @@ As expected, the analysis revealed differences between the created_at timestamps
 
 To address the data accuracy concerns, **I will use the created_at column from the ORDERS table when joining the ORDERS and ORDER_ITEMS tables.** This approach ensures more reliable timestamps, as the created_at values in the ORDERS table have been verified to be accurate and consistently recorded before the shipped_at dates.
 
+#### **Consistency Check**
+
 **To check the validity of the "Processing" and "Shipped" status categories** and understand why they make up more than 50% of the ORDERS table, I will analyze the following aspects:
 
-Time Distribution: Determine if there has been an increase in the number of orders generated in recent months, which could explain the high number of "Processing" and "Shipped" statuses.
-Status Update: Investigate if orders have not been updated to the correct status, indicating potential delays or issues in the order processing workflow.
+- Time Distribution: Determine if there has been an increase in the number of orders generated in recent months, which could explain the high number of "Processing" and "Shipped" statuses.
+- 
+- Status Update: Investigate if orders have not been updated to the correct status, indicating potential delays or issues in the order processing workflow.
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/aa16d8b1-c272-4a2b-b441-3e0bac79680e)
 
@@ -231,7 +234,8 @@ I discovered that many orders from January 2019 are still in the processing stag
 **4.1. The number of completed orders and user each month**
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/4b5b9436-e885-4e3f-950d-651f1f7132b2)
-Number of orders and users increased month after month
+
+The result reveals a positive trend of consistent growth in both the number of orders and the number of users month after month. This upward trajectory suggests increasing customer engagement and expanding business operations.
 
 **4.2. Average Order Value (AOV) and the number of customers per month** 
 
