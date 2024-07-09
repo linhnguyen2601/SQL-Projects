@@ -256,3 +256,32 @@ group by category
 order by revenue desc
 
 **3.8.  Cohort Analysis.**
+
+with cte as (
+select user_id, created_at, 
+min(created_at) over(partition by user_id) as first_purchase from bigquery-public-data.thelook_ecommerce.orders
+where status = 'Complete' and created_at between '2023-07-01' and '2024-07-01'),
+cte2 as (
+select *, format_date('%Y-%m', first_purchase) as month_year,
+    (extract(year from created_at) - extract(year from first_purchase))*12 
+    + extract(month from created_at) - extract(month from first_purchase) + 1 AS cohort_index
+FROM  cte),
+cte3 as (
+select month_year, cohort_index, count(Distinct(user_id)) as total_users from cte2
+group by month_year, cohort_index)
+select month_year,
+sum(Case when cohort_index = 1 then total_users else 0 end) as m1,
+sum(Case when cohort_index = 2 then total_users else 0 end) as m2,
+sum(Case when cohort_index = 3 then total_users else 0 end) as m3,
+sum(Case when cohort_index = 4 then total_users else 0 end) as m4,
+sum(Case when cohort_index = 5 then total_users else 0 end) as m5,
+sum(Case when cohort_index = 6 then total_users else 0 end) as m6,
+sum(Case when cohort_index = 7 then total_users else 0 end) as m7,
+sum(Case when cohort_index = 8 then total_users else 0 end) as m8,
+sum(Case when cohort_index = 9 then total_users else 0 end) as m9,
+sum(Case when cohort_index = 10 then total_users else 0 end) as m10,
+sum(Case when cohort_index = 11 then total_users else 0 end) as m11,
+sum(Case when cohort_index = 12 then total_users else 0 end) as m12
+from cte3
+group by month_year
+order by month_year
