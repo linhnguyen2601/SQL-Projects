@@ -17,7 +17,7 @@ The Retention rate of the e-Commerce platform is alarmingly low, with 90% of new
 **Goal**: design a strategic dashboard tailored for executive levels. Individuals at this level prefer streamlined dashboard without overly complex charts or excessive slicers.
 
 ### 1.2. About the dataset:
-Dataset in BigQuery. The dataset contains information >about customers, products, orders, logistics, web events and digital marketing campaigns. The contents of this >dataset are synthetic, and are provided to industry practitioners for the purpose of product discovery, testing, and >evaluation.
+Dataset in BigQuery. The dataset contains information about customers, products, orders, logistics, web events and digital marketing campaigns. The contents of this dataset are synthetic, and are provided to industry practitioners for the purpose of product discovery, testing, and >evaluation.
 
 I use the Big Query to do the project with SQL:
 Datasource: https://console.cloud.google.com/bigquery?p=bigquery-public-data&d=thelook_ecommerce&page=dataset&project=project-2-422702&ws=!1m15!1m4!1m3!1sproject-2-422702!2sbquxjob_63602b4b_1907d32f234!3sUS!1m4!4m3!1sbigquery-public-data!2sthelook_ecommerce!3sdistribution_centers!1m4!4m3!1sbigquery-public-data!2sthelook_ecommerce!3sproducts
@@ -139,7 +139,7 @@ However, we will be focusing only the following 4 tables:
 
 ## 2. Data cleaning
 
-**2.1. Check NULL**
+**2.1. Data Quality Checks: Data Type Validation, Null Values, and Duplicates**
 
 **ORDERS Table**
 
@@ -201,27 +201,30 @@ By using the ROW_NUMBER() function to group the data and setting the condition t
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/a6fc2d26-507f-4847-8d6c-8c74fc4f052f)
 
-After cross-checking data from the two tables, ORDERS and ORDER_ITEMS, I discovered that the total number of orders and the number of orders in each category differ between the two tables when applying the condition that considers orders created before July 2024. The reason I chose the column Created_at is because that column has no null values.
+After cross-checking data from the two tables, ORDERS and ORDER_ITEMS, I discovered that the total number of orders and the number of orders in each category differ between the two tables when applying filters for orders created before July 2024. The reason I chose the column Created_at is because that column has no null values.
 
-I continued to check if there is any difference between the Created_at column in the ORDERS table and the ORDER_ITEMS table by using JOIN(), considering the fact that the data might be recorded with different logic.
+To investigate the differences between the created_at timestamps in the ORDERS table and the ORDER_ITEMS table, I performed a SQL join operation. 
+
+This analysis is based on the assumption that there might be differences between the timestamps in the two tables, given that the created_at timestamp in the ORDERS table records the time when an order was initially created (typically when an item is first added to the shopping cart), whereas the created_at timestamp in the ORDER_ITEMS table records the time each individual item is added to the cart.
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/b755a4d3-4f53-4b0e-a80d-27f4a6d4426b)
 
-The time an order is created and the time each item in the order is created are different. This raises additional concerns about the accuracy of the Created_at column in the ORDER_ITEMS table, as this issue does not occur in the ORDERS table where the Created_at date is never after the Shipped_at date. However, in the ORDER_ITEMS table, this issue occurs quite frequently (35,865 rows out of 181,427 rows, which is nearly 20%), not to mention the Shipped_at column has null values in as much as 30% of the rows so we cannot update values of those entries to make it reasonable.
+As expected, the analysis revealed differences between the created_at timestamps in the ORDERS table and the ORDER_ITEMS table. This discrepancy raises concerns about the accuracy of the created_at column in the ORDER_ITEMS table. Specifically, while the created_at date in the ORDERS table is always before the shipped_at date, the ORDER_ITEMS table frequently has created_at dates that are after the shipped_at dates. This issue affects a significant portion of the data (35,865 rows out of 181,427 rows, or nearly 20%).
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/934a54eb-a64a-473c-bddc-d3767ed99a2f)
 
-Therefore, I will use the Created_at column from the ORDERS table when joining the ORDERS and ORDER_ITEMS tables.
+To address the data accuracy concerns, **I will use the created_at column from the ORDERS table when joining the ORDERS and ORDER_ITEMS tables.** This approach ensures more reliable timestamps, as the created_at values in the ORDERS table have been verified to be accurate and consistently recorded before the shipped_at dates.
 
-Considering that orders with the "Complete" status only account for 25% of the entire ORDERS table, while orders with the "Processing" and "Shipped" statuses make up more than 50% of the table, I will check the validity of these two status categories.
-- Are there many orders generated in recent months, causing the "Processing" and "Shipped" statuses to be high?
-- If not, is it because the orders have not been updated to the correct status?
+**To check the validity of the "Processing" and "Shipped" status categories** and understand why they make up more than 50% of the ORDERS table, I will analyze the following aspects:
+
+Time Distribution: Determine if there has been an increase in the number of orders generated in recent months, which could explain the high number of "Processing" and "Shipped" statuses.
+Status Update: Investigate if orders have not been updated to the correct status, indicating potential delays or issues in the order processing workflow.
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/aa16d8b1-c272-4a2b-b441-3e0bac79680e)
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/0f9eb180-6531-4684-ab50-e8b6747b67e2)
 
-I discovered that many orders from January 2019 are still in processing, and many orders from January 2019 are still in the shipped status but have not been completed. As it is unclear whether these orders will be completed, I decided to focus on "Complete" orders only for the analysis, as there is no stakeholder to clarify this point.
+I discovered that many orders from January 2019 are still in the processing stage, and many others are in the shipped status but remain incomplete. Since it is unclear whether these orders will ever be completed and there is no stakeholder available to provide clarification, **I decided to focus solely on "Complete" orders for the analysis**.
 
 ## 4. EDA
 
