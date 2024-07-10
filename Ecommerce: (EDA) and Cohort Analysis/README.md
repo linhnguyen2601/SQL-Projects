@@ -357,9 +357,11 @@ RETENTION COHORT
 After analyzing the dataset, it’s evident that the retention rate is low as a significant portion of users appear to engage with the platform only once or a few times within a short period and then do not return. This results in a high churn rate, with many users not making repeat purchases after their first transaction. I then identified the characteristics of churned customers:
 
 a. I define that a customer is considered churned if they haven't made a purchase in the last six months.
+
 b. Based on the dataset, I analyze churned customer characteristics:
 
 - Demographic Analysis
+  - Age: Check the age distribution of churned customers. Identify any age groups with a higher churn rate.
   - Gender: Compare churn rates between different genders.
   - Location: Analyze if churn rates vary significantly by geographical location.
 
@@ -367,3 +369,62 @@ b. Based on the dataset, I analyze churned customer characteristics:
   - Purchase Frequency: Determine how often churned customers made purchases compared to active customers and identify any patterns in purchase frequency before churning.
   - Total Spend: Compare the total spend of churned customers with that of active customers. Higher spenders may require different retention strategies than lower spenders.
   - Order Value: Analyze the average order value of churned customers. Look for patterns in order size and frequency.
+
+```
+with cte as(
+select a.user_id, a.gender, b.age, b.country, b.traffic_source, a.created_at,
+max(a.created_at) over(partition by user_id) as last_purchase
+from bigquery-public-data.thelook_ecommerce.orders as a
+join bigquery-public-data.thelook_ecommerce.users as b
+on a.user_id = b.id
+where  a.status = 'Complete' and (a.created_at between '2023-07-01' and '2024-07-01')),
+cte2 as(
+select *, 
+(extract(year from current_date) - extract(year from last_purchase))*12 
+    + extract(month from current_date) - extract(month from last_purchase) + 1 as month from cte),
+cte3 as(
+select user_id, gender, age, country, traffic_source, last_purchase, month,
+case when month > 6 then 1 else 0 end as churned_customer
+from cte2)
+select count(Distinct(user_id)) from cte3 where churned_customer = 1
+``` 
+
+There are 5885 churned users over a total of 13116 users who have maked a purchase in the last 12 months (44.87%).
+
+```
+with cte as(
+select a.user_id, a.gender, b.age, b.country, b.traffic_source, a.created_at,
+max(a.created_at) over(partition by user_id) as last_purchase
+from bigquery-public-data.thelook_ecommerce.orders as a
+join bigquery-public-data.thelook_ecommerce.users as b
+on a.user_id = b.id
+where  a.status = 'Complete' and (a.created_at between '2023-07-01' and '2024-07-01')),
+
+cte2 as(
+select *, 
+(extract(year from current_date) - extract(year from last_purchase))*12 
+    + extract(month from current_date) - extract(month from last_purchase) + 1 as month from cte),
+
+cte3 as(
+select user_id, gender, age, country, traffic_source, last_purchase, month,
+case when month > 6 then 1 else 0 end as churned_customer
+from cte2),
+
+cte4 as(
+select *,
+case when age < 24 then '12-23_years_old'
+when age between 24 and 34 then '24-34_years_old'
+when age between 35 and 49 then '35-49_years_old'
+else '24-34_years_old' end as age_group
+ from cte3 where churned_customer = 1)
+
+select age_group,
+count(Distinct(user_id)) as churned_users from cte4
+group by age_group
+order by age_group
+```
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/46249b6a-7b3b-4b9a-ba0f-802759f5f4e7)
+
+There are no reported churned users in the 50-61 age group.
+
