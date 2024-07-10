@@ -428,3 +428,120 @@ order by age_group
 
 There are no reported churned users in the 50-61 age group.
 
+```
+with cte as(
+select a.user_id, a.gender, b.age, b.country, b.traffic_source, a.created_at,
+max(a.created_at) over(partition by user_id) as last_purchase
+from bigquery-public-data.thelook_ecommerce.orders as a
+join bigquery-public-data.thelook_ecommerce.users as b
+on a.user_id = b.id
+where  a.status = 'Complete' and (a.created_at between '2023-07-01' and '2024-07-01')),
+
+cte2 as(
+select *, 
+(extract(year from current_date) - extract(year from last_purchase))*12 
+    + extract(month from current_date) - extract(month from last_purchase) + 1 as month from cte),
+
+cte3 as(
+select user_id, gender, age, country, traffic_source, last_purchase, month,
+case when month > 6 then 1 else 0 end as churned_customer
+from cte2)
+select gender, count(Distinct(user_id)) as churned_users from cte3
+group by gender
+```
+
+```
+with cte as(
+select a.user_id, a.gender, b.age, b.country, b.traffic_source, a.created_at,
+max(a.created_at) over(partition by user_id) as last_purchase
+from bigquery-public-data.thelook_ecommerce.orders as a
+join bigquery-public-data.thelook_ecommerce.users as b
+on a.user_id = b.id
+where  a.status = 'Complete' and (a.created_at between '2023-07-01' and '2024-07-01')),
+
+cte2 as(
+select *, 
+(extract(year from current_date) - extract(year from last_purchase))*12 
+    + extract(month from current_date) - extract(month from last_purchase) + 1 as month from cte),
+
+cte3 as(
+select user_id, gender, age, country, traffic_source, last_purchase, month,
+case when month > 6 then 1 else 0 end as churned_customer
+from cte2)
+
+select country, count(Distinct(user_id)) as churned_customer from cte3
+group by country
+order by churned_customer desc
+```
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/4ff49822-ad46-41ec-9867-66bd0034f85c)
+
+
+```
+with cte as(
+select a.user_id, a.gender, b.age, b.country, b.traffic_source, a.created_at,
+max(a.created_at) over(partition by user_id) as last_purchase
+from bigquery-public-data.thelook_ecommerce.orders as a
+join bigquery-public-data.thelook_ecommerce.users as b
+on a.user_id = b.id
+where  a.status = 'Complete' and (a.created_at between '2023-07-01' and '2024-07-01')),
+
+cte2 as(
+select *, 
+(extract(year from current_date) - extract(year from last_purchase))*12 
+    + extract(month from current_date) - extract(month from last_purchase) + 1 as month from cte),
+
+cte3 as(
+select user_id, gender, age, country, traffic_source, last_purchase, month,
+case when month > 6 then 1 else 0 end as churned_customer
+from cte2),
+
+select churned_customer, count(*) as number_of_orders, 
+count(distinct(user_id)) as number_of_users from cte3
+group by churned_customer
+```
+
+
+
+```
+with cte0 as(
+select order_id, sum(sale_price) as order_value from bigquery-public-data.thelook_ecommerce.order_items 
+group by order_id),
+
+cte as(
+select a.user_id, a.gender, b.age, b.country, b.traffic_source, a.created_at, c.*,
+max(a.created_at) over(partition by user_id) as last_purchase
+from bigquery-public-data.thelook_ecommerce.orders as a
+join bigquery-public-data.thelook_ecommerce.users as b
+on a.user_id = b.id
+join cte0 as c
+on c.order_id = a.order_id
+where  a.status = 'Complete' and (a.created_at between '2023-07-01' and '2024-07-01')),
+
+cte2 as(
+select *, 
+(extract(year from current_date) - extract(year from last_purchase))*12 
+    + extract(month from current_date) - extract(month from last_purchase) + 1 as month from cte),
+
+cte3 as(
+select order_id, user_id, gender, age, country, traffic_source, last_purchase, month, order_value,
+case when month > 6 then 1 else 0 end as churned_customer
+from cte2),
+
+cte4 as(
+select *,
+case when age < 24 then '12-23_years_old'
+when age between 24 and 34 then '24-34_years_old'
+when age between 35 and 49 then '35-49_years_old'
+else '24-34_years_old' end as age_group
+ from cte3 where churned_customer = 1)
+
+select churned_customer, count(distinct(order_id)) as number_of_orders, 
+count(distinct(user_id)) as number_of_users,
+sum(order_value) as total_order_value,
+sum(order_value)/count(distinct(order_id)) as average_order_value from cte3
+group by churned_customer
+```
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/9053f179-e58e-4243-a286-7a17b3c988b6)
+
