@@ -317,3 +317,53 @@ select *,
 
 ## Cohort Analysis
 
+```
+with cte as (
+select user_id, created_at, 
+min(created_at) over(partition by user_id) as first_purchase from bigquery-public-data.thelook_ecommerce.orders
+where status = 'Complete' and created_at between '2023-07-01' and '2024-07-01'),
+cte2 as (
+select *, format_date('%Y-%m', first_purchase) as month_year,
+    (extract(year from created_at) - extract(year from first_purchase))*12 
+    + extract(month from created_at) - extract(month from first_purchase) + 1 AS cohort_index
+FROM  cte),
+cte3 as (
+select month_year, cohort_index, count(Distinct(user_id)) as total_users from cte2
+group by month_year, cohort_index)
+select month_year,
+sum(Case when cohort_index = 1 then total_users else 0 end) as m1,
+sum(Case when cohort_index = 2 then total_users else 0 end) as m2,
+sum(Case when cohort_index = 3 then total_users else 0 end) as m3,
+sum(Case when cohort_index = 4 then total_users else 0 end) as m4,
+sum(Case when cohort_index = 5 then total_users else 0 end) as m5,
+sum(Case when cohort_index = 6 then total_users else 0 end) as m6,
+sum(Case when cohort_index = 7 then total_users else 0 end) as m7,
+sum(Case when cohort_index = 8 then total_users else 0 end) as m8,
+sum(Case when cohort_index = 9 then total_users else 0 end) as m9,
+sum(Case when cohort_index = 10 then total_users else 0 end) as m10,
+sum(Case when cohort_index = 11 then total_users else 0 end) as m11,
+sum(Case when cohort_index = 12 then total_users else 0 end) as m12
+from cte3
+group by month_year
+order by month_year
+```
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/1d02ed1d-ee4b-4a05-aa8e-177b25b815f1)
+
+RETENTION COHORT
+
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/eb68338c-6557-4b37-b453-1e6f42fb79b6)
+
+After analyzing the dataset, it’s evident that the retention rate is low as a significant portion of users appear to engage with the platform only once or a few times within a short period and then do not return. This results in a high churn rate, with many users not making repeat purchases after their first transaction. I then identified the characteristics of churned customers:
+
+a. I define that a customer is considered churned if they haven't made a purchase in the last six months.
+b. Based on the dataset, I analyze churned customer characteristics:
+
+- Demographic Analysis
+  - Gender: Compare churn rates between different genders.
+  - Location: Analyze if churn rates vary significantly by geographical location.
+
+- Behavioral Analysis
+  - Purchase Frequency: Determine how often churned customers made purchases compared to active customers and identify any patterns in purchase frequency before churning.
+  - Total Spend: Compare the total spend of churned customers with that of active customers. Higher spenders may require different retention strategies than lower spenders.
+  - Order Value: Analyze the average order value of churned customers. Look for patterns in order size and frequency.
