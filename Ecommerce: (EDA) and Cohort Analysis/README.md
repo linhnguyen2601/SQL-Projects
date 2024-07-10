@@ -476,6 +476,7 @@ order by churned_customer desc
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/4ff49822-ad46-41ec-9867-66bd0034f85c)
 
+China has the highest number of churned customers (7,336), significantly more than the second-highest country, the United States (4,844). 
 
 ```
 with cte as(
