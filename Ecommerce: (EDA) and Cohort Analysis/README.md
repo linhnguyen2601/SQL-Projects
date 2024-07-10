@@ -450,6 +450,12 @@ select gender, count(Distinct(user_id)) as churned_users from cte3
 group by gender
 ```
 
+![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/b8a4b0d1-9cee-4c35-9574-3ba909902e14)
+
+Both genders exhibit a high rate, with approximately 60-61% of customers not returning.
+The churn percentage is very similar between genders, with only a 1% difference, suggesting that gender alone may not be a significant factor in the churn rate.
+
+ 
 ```
 with cte as(
 select a.user_id, a.gender, b.age, b.country, b.traffic_source, a.created_at,
@@ -476,7 +482,7 @@ order by churned_customer desc
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/4ff49822-ad46-41ec-9867-66bd0034f85c)
 
-China has the highest number of churned customers (7,336), significantly more than the second-highest country, the United States (4,844). 
+China has the highest number of churned customers (1,991) among 14 countries which appear in this dataset, significantly more than the second-highest country, the United States (1.324), followed by Brazil, South Korea, the UK, France, Germany, etc.
 
 ```
 with cte as(
