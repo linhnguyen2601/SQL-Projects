@@ -52,6 +52,24 @@ The new table, online_retail_clean, contains 392,668 records.
 ## 3. Data Exploratory
 
 ```
+select count(distinct(invoiceno)) as count_invoiceno,
+	count(distinct(stockcode)) as count_stockcode,
+	count(distinct(description)) as count_description,
+	count(distinct(country)) as count_country from online_retail_clean
+```
+
+![image](https://github.com/user-attachments/assets/53b544d0-09cd-4732-a30d-48e07bd34c51)
+
+```
+select stockcode, count(Distinct(description)) from online_retail_clean
+group by stockcode
+order by count(Distinct(description)) desc
+```
+
+![image](https://github.com/user-attachments/assets/6d238796-684a-428d-9ce8-74c1ea878233)
+
+
+```
 select stockcode, description,
   round(cast(sum(quantity*unitprice) as numeric),2) as revenue, 
 	round(
