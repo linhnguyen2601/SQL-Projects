@@ -8,7 +8,7 @@
 
 TheLook is a fictitious e-Commerce clothing site developed by the Looker team. 
 
-The Retention rate of the e-Commerce platform is alarmingly low, with 90% of new customers not returning. To address this issue, we will explore the following questions: 
+The Retention rate of the e-Commerce platform is **alarmingly low, with 90% of new customers not returning**. To address this issue, we will explore the following questions: 
 
 - What is the customer return rate of the platform?
 - Who are the customers that are leaving?
