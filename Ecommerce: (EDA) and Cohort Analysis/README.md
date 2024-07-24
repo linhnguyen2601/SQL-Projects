@@ -278,42 +278,6 @@ The top-selling product with the highest profit is the AIR JORDAN DOMINATE SHORT
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/5874b73c-7193-40d5-8df1-f43b86699fd8)
 
-## Dashboard
-
-The necessary metrics for the dashboard and needs to extract data from the database to create a dataset as described.
-
-![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/eff8af4e-d181-49d1-a3ba-03260f08352c)
-
-with cte as(
-  select a.order_id, a.created_at, b.product_id, b.sale_price, c.category, c.cost
-from bigquery-public-data.thelook_ecommerce.orders as a
-join bigquery-public-data.thelook_ecommerce.order_items as b
-on a.order_id = b.order_id
-join bigquery-public-data.thelook_ecommerce.products as c
-on b.product_id = c.id
-where a.status = 'Complete' and a.created_at < '2024-07-01'
-), 
-cte2 as(
-select extract(month from created_at) as month, 
-extract(year from created_at) as year,
-category as product_category,
-sum(sale_price) as TPV,
-count(Distinct(order_id)) as TPO, 
-sum(cost) as total_cost,
-sum(sale_price - cost) as total_profit,
-sum(sale_price-cost)/sum(cost) as Profit_to_cost_ratio
-from cte
-group by month, year, product_Category
-),
-cte3 as(
-select *, 
-lead(TPV) over(order by month, product_category) as previous_total_revenue,
-lead(TPO) over(order by month,product_category) as previous_total_order,
-from cte2
-order by year desc, month
-)
-select *, 
-
 
 ## Cohort Analysis
 
