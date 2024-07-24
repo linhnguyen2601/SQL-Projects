@@ -49,24 +49,60 @@ Therefore, I create a new table after filtering out rows with null customer IDs,
 
 The new table, online_retail_clean, contains 392,668 records.
 
-## 3. Data analysis with Cohort analysis: Results and Dashboard
+## 3. Data Exploratory
+
+```
+select stockcode, description,
+  round(cast(sum(quantity*unitprice) as numeric),2) as revenue, 
+	round(
+	cast(sum(quantity*unitprice)*100/(select Sum(quantity*unitprice) from online_retail_clean) as numeric)
+	,2) as percentage
+	from online_retail_clean
+group by stockcode, description
+order by sum(quantity*unitprice) desc
+```
+
+![image](https://github.com/user-attachments/assets/f6435896-fd73-4e72-ae6d-6c915d8d828b)
+
+```
+select country, round(cast(sum(quantity*unitprice) as numeric),2) as revenue, 
+	round(
+	cast(sum(quantity*unitprice)*100/(select Sum(quantity*unitprice) from online_retail_clean) as numeric)
+	,2) as percentage
+	from online_retail_clean
+group by country
+order by sum(quantity*unitprice) desc
+```
+
+![image](https://github.com/user-attachments/assets/6c10815f-bf85-4102-aa55-66705ca97425)
+
+```
+UPDATE online_retail_clean
+SET country = 'Ireland'
+WHERE country = 'EIRE'
+```
+
+![image](https://github.com/user-attachments/assets/b08ab9ae-ca34-43e4-a837-eb92ac7e4dce)
+
+
+## 4. Data analysis with Cohort analysis: Results and Dashboard
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/f9521853-836c-4cb0-b5ee-8b8b702d8b11)
 
-### 3.1 Customer Cohort
+### 4.1 Customer Cohort
 
 Customer cohorts are groups of customers identified by the month they first engaged with a product or service. Measurement involves tracking their behavior and performance over time to understand retention, purchasing patterns, and lifetime value.
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/2ef859c8-44ba-4e0a-9d76-f59060a55ff5)
 
 
-### 3.2 Retention Cohort
+### 4.2 Retention Cohort
 
 A retention cohort measured in months for 13 months involves analyzing groups of customers based on the month they first engaged with a product or service. Each cohort represents customers who started their relationship in a specific month, and retention is tracked over the following 12 months to observe how many customers remain engaged or active over time. This approach helps businesses understand long-term customer retention trends and assess the effectiveness of retention strategies implemented over monthly intervals.
 
 ![image](https://github.com/linhnguyen2601/SQL-Projects/assets/166676829/565571d6-d836-4ad4-bf0f-c8a548b03e94)
 
-### 3.3 Churn Cohort
+### 4.3 Churn Cohort
 
 A churn cohort measured in months for 13 months involves analyzing groups of customers based on the month they first engaged with a product or service. Each cohort represents customers who started their relationship in a specific month, and churn is tracked over the following 12 months to observe how many customers discontinue their engagement or become inactive over time. 
 
